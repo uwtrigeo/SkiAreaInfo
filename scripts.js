@@ -8,15 +8,13 @@ var map = new mapboxgl.Map({
     zoom: 9 // starting zoom
 });
 
-// Geocoder
-var geocoder = new MapboxGeocoder({ // Initialize the geocoder
-    accessToken: mapboxgl.accessToken, // Set the access token
-    mapboxgl: mapboxgl, // Set the mapbox-gl instance
-    marker: false, // Do not use the default marker style
-    placeholder: 'Search for places' // Placeholder text for the search bar
-});
-
-map.addControl(geocoder); // Add the geocoder to the map
+// Search bar
+map.addControl(
+    new MapboxGeocoder({
+      accessToken: mapboxgl.accessToken
+    }),
+    'top-left' // Position the control at the top left corner
+  );
 
 // Add zoom and rotation controls to the map.
 map.addControl(new mapboxgl.NavigationControl());
