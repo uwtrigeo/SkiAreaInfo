@@ -30,3 +30,15 @@ map.addControl(new mapboxgl.GeolocateControl({
 
 // Fullscreen
 map.addControl(new mapboxgl.FullscreenControl());
+
+// 3D Terrain
+map.on('style.load', () => {
+    map.addSource('mapbox-dem', {
+    'type': 'raster-dem',
+    'url': 'mapbox://mapbox.mapbox-terrain-dem-v1',
+    'tileSize': 512,
+    'maxzoom': 14
+    });
+    // add the DEM source as a terrain layer with exaggerated height
+    map.setTerrain({ 'source': 'mapbox-dem', 'exaggeration': 1.5 });
+    });
