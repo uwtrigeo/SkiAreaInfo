@@ -10,11 +10,17 @@ var map = new mapboxgl.Map({
 
 // Search bar
 map.addControl(
-    new MapboxGeocoder({
-      accessToken: mapboxgl.accessToken
-    }),
-    'top-left' // Position the control at the top left corner
-  );
+  new MapboxGeocoder({
+    accessToken: mapboxgl.accessToken
+  }),
+  'top-left' // Position the control at the top left corner
+);
+
+// Set the initial pitch and bearing of the map
+map.on('load', function() {
+  map.setPitch(45); // Set the pitch to 45 degrees
+  map.setBearing(0); // Set the bearing to 45 degrees
+});
 
 // Add zoom and rotation controls to the map.
 map.addControl(new mapboxgl.NavigationControl());
