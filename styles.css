@@ -20,4 +20,10 @@ html, body {
     pointer-events: none;
 }
 
-
+#slider {
+    position: fixed;
+    right: 20px;
+    bottom: 20px;
+    width: 200px;
+    z-index: 1000; /* Adjust this as needed */
+}

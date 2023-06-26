@@ -11,11 +11,15 @@
      crossorigin=""/>
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
   crossorigin=""></script>
+  <!-- no UI slider -->
+  <link href="https://cdn.jsdelivr.net/npm/nouislider@14.6.4/distribute/nouislider.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/nouislider@14.6.4/distribute/nouislider.min.js"></script>
 
 </head>
 <body>
   <!-- link that loads the ski resort data from an external file -->
   <script type="text/javascript" src="data/ski_resort_stats.js"></script>
+  
   <!-- Navigation bar to access other maps -->
   <header>
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
@@ -50,7 +54,10 @@
       </div>
     </nav>
   </header>
+  <div id="slider"></div>
   <div id="map"></div>
+  
+
   <script>
     // Add basemap
     // Stamen_TonerLite
@@ -81,54 +88,89 @@
         attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
     });
 
-    // load GeoJSON from an external file
-    var skiStats = L.geoJSON(ski_stats, {
-    pointToLayer: function (feature, latlng) {
-      var circleSize;      
-          if (feature.properties.acres <= 100) circleSize = 4;
-          else if (feature.properties.acres <= 300) circleSize = 6;
-          else if (feature.properties.acres <= 800) circleSize = 8;
-          else if (feature.properties.acres <= 2000) circleSize = 10;
-          else if (feature.properties.acres <= 3000) circleSize = 14;
-          else if (feature.properties.acres <= 7500) circleSize = 18;
-          else circleSize = 0;
-
-      var circleColor;      
-          if (feature.properties.acres <= 100) circleColor = '#3288bd';
-          else if (feature.properties.acres <= 300) circleColor = '#99d594';
-          else if (feature.properties.acres <= 800) circleColor = '#e6f598';
-          else if (feature.properties.acres <= 2000) circleColor = '#fee08b';
-          else if (feature.properties.acres <= 3000) circleColor = '#fc8d59';
-          else if (feature.properties.acres > 3000) circleColor = '#d53e4f';
-          else circleColor = '#737373';
-      
-      var marker = L.circleMarker(latlng, {radius: circleSize, color: circleColor, weight: 1, opacity: 4, fillOpacity: 0.7});
-          marker.bindPopup("<b> Resort Name: </b>" + feature.properties.resort_name + "<br><b> Acres: </b>" + feature.properties.acres + "</p>");
-          return marker;
-      }
-    });
-    
     // Initialize map
-      var map = L.map('map', {
-        center: [37.0902, -95.7129],
-        zoom: 5,
-        layers: [Stamen_TonerLite, skiStats]
-      });
+    var map = L.map('map', {
+      center: [37.0902, -95.7129],
+      zoom: 5
+    });
 
-      var layerControl = L.control.layers({
-          "Stamen Toner Lite": Stamen_TonerLite,
-          "OpenStreetMap HOT": OpenStreetMap_HOT,
-          "OpenStreetMap": OSM,
-          "OSM Topo": OpenTopoMap,
-          "Esri World Imagery": Esri_WorldImagery
-          }, 
-          {
-          "Ski Resorts": skiStats
-          
-          }, 
-          {
-        
-      }).addTo(map);
+    // Initialize your noUiSlider
+    var slider = document.getElementById('slider');
+
+    noUiSlider.create(slider, {
+        start: [0, 7500],
+        connect: true,
+        step: 100,
+        range: {
+            'min': 0,
+            'max': 7500
+        },
+        step: 100,
+    });
+
+    // Initialize skiStats as an empty L.geoJSON layer
+    var skiStats = L.geoJSON().addTo(map);
+
+    slider.noUiSlider.on('update', function (values, handle) {
+        var minAcres = parseFloat(values[0]);
+        var maxAcres = parseFloat(values[1]);
+
+        // Clear the current map layer
+        skiStats.clearLayers();
+
+        // Load GeoJSON from an external file
+        L.geoJSON(ski_stats, {
+            filter: function (feature) {
+                // Only show features within the selected acre range
+                return feature.properties.acres >= minAcres && feature.properties.acres <= maxAcres;
+            },
+            pointToLayer: function (feature, latlng) {
+                // Your pointToLayer code
+                var circleSize;      
+                if (feature.properties.acres <= 100) circleSize = 4;
+                else if (feature.properties.acres <= 300) circleSize = 6;
+                else if (feature.properties.acres <= 800) circleSize = 8;
+                else if (feature.properties.acres <= 2000) circleSize = 10;
+                else if (feature.properties.acres <= 3000) circleSize = 14;
+                else if (feature.properties.acres <= 7500) circleSize = 18;
+                else circleSize = 0;
+
+                var circleColor;      
+                if (feature.properties.acres <= 100) circleColor = '#3288bd';
+                else if (feature.properties.acres <= 300) circleColor = '#99d594';
+                else if (feature.properties.acres <= 800) circleColor = '#e6f598';
+                else if (feature.properties.acres <= 2000) circleColor = '#fee08b';
+                else if (feature.properties.acres <= 3000) circleColor = '#fc8d59';
+                else if (feature.properties.acres > 3000) circleColor = '#d53e4f';
+                else circleColor = '#737373';
+
+                var marker = L.circleMarker(latlng, {radius: circleSize, color: circleColor, weight: 1, opacity: 4, fillOpacity: 0.7});
+                marker.bindPopup("<b> Resort Name: </b>" + feature.properties.resort_name + "<br><b> Acres: </b>" + feature.properties.acres + "</p>");
+                return marker;
+            }
+        }).addTo(skiStats);
+
+    });
+
+    // Base maps
+    var baseMaps = {
+      "Stamen Toner Lite": Stamen_TonerLite,
+      "OpenStreetMap HOT": OpenStreetMap_HOT,
+      "OpenStreetMap": OSM,
+      "OSM Topo": OpenTopoMap,
+      "Esri World Imagery": Esri_WorldImagery
+    };
+
+    // Overlays
+    var overlayMaps = {
+      "Ski Resorts": skiStats
+    };
+
+    // Layer control
+    var layerControl = L.control.layers(baseMaps, overlayMaps).addTo(map);
+
+    // Add base layer to the map
+    baseMaps["Stamen Toner Lite"].addTo(map);
     
     // add scale bar
     L.control.scale().addTo(map);
@@ -145,6 +187,7 @@
 
     // Add the title to the map
     title.addTo(map);
+
 
 
 
