@@ -10,3 +10,14 @@ html, body {
     bottom: 0;
     width: 100%;
 }
+
+.info.map-title {
+    position: absolute;
+    width: 100%;
+    text-align: left;
+    left: 40px;
+    white-space: nowrap;
+    pointer-events: none;
+}
+
+
