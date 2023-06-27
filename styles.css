@@ -1,7 +1,7 @@
 html, body {
     margin: 0;
     padding: 0;
-    overflow-x: hidden; /* Optional: in case horizontal scroll appears */
+    overflow-x: hidden; Optional: in case horizontal scroll appears
 }
 
 #map {
@@ -22,8 +22,13 @@ html, body {
 
 #slider {
     position: fixed;
-    right: 20px;
-    bottom: 20px;
-    width: 200px;
+    right: 4.5%;
+    bottom: 6%;
+    width: 15px;
+    height: 300px;
     z-index: 1000; /* Adjust this as needed */
 }
+/* noUISlider numbers changed color to black */
+#slider .noUi-value {
+    color: black;
+  }
