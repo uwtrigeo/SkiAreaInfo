@@ -13,9 +13,7 @@
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
   <link rel="stylesheet" href="styles.css">
 </head>
-<body>
-  
-  
+<body>  
   <header>
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
       <a class="navbar-brand" href="index.html">My Ski Resort</a>
@@ -50,5 +48,88 @@
     </nav>    
   </header>
   <div id="map"></div>
-  <script src="scripts.js"></script> 
+  <script>
+    mapboxgl.accessToken = 'pk.eyJ1IjoidHJpZ2VvIiwiYSI6ImNsZHZ5YW9tYjAyODAzdXM4bHlwbjhnNm4ifQ.kHTDG7XT7noaK7zzYwHYbA'; // replace this with your access token
+
+    // Map
+    var map = new mapboxgl.Map({
+        container: 'map', // id of your map container
+        style: 'mapbox://styles/mapbox/streets-v12', // your map style
+        center: [-121.47, 46.93], // starting position
+        zoom: 12 // starting zoom
+    });
+
+    // Add Crystal_av.json to map
+    map.on('load', function() {
+      map.addSource('crystal', {
+        type: 'geojson',
+        data: 'data/Crystal_av.json'
+      });
+      map.addLayer({
+        id: 'crystal',
+        type: 'fill',
+        source: 'crystal',
+        layout: {},
+        paint: {
+          'fill-color': 'red',
+          'fill-opacity': 0.8
+        }
+      });
+    });
+
+    // Search bar
+    map.addControl(
+      new MapboxGeocoder({
+        accessToken: mapboxgl.accessToken
+      }),
+      'top-left' // Position the control at the top left corner
+    );
+
+    // Set the initial pitch and bearing of the map
+    map.on('load', function() {
+      map.setPitch(45); // Set the pitch to 45 degrees
+      map.setBearing(0); // Set the bearing to 45 degrees
+    });
+
+    // Add zoom and rotation controls to the map.
+    map.addControl(new mapboxgl.NavigationControl());
+
+    // Add geolocate control to the map.
+    map.addControl(new mapboxgl.GeolocateControl({
+        positionOptions: {
+            enableHighAccuracy: true
+        }
+    }));
+
+    // Fullscreen
+    map.addControl(new mapboxgl.FullscreenControl());
+
+    // 3D Terrain
+    map.on('style.load', () => {
+        map.addSource('mapbox-dem', {
+        'type': 'raster-dem',
+        'url': 'mapbox://mapbox.mapbox-terrain-dem-v1',
+        'tileSize': 512,
+        'maxzoom': 14
+        });
+        // add the DEM source as a terrain layer with exaggerated height
+        map.setTerrain({ 'source': 'mapbox-dem', 'exaggeration': 1.5 });
+        });
+
+    // add a sky layer that will show when the map is highly pitched
+    map.addLayer({
+        'id': 'sky',
+        'type': 'sky',
+        'paint': {
+        'sky-type': 'atmosphere',
+        'sky-atmosphere-sun': [0.0, 0.0],
+        'sky-atmosphere-sun-intensity': 15
+        }
+    });
+
+    // Add a layer showing the places.
+    
+    
+
+  </script> 
 </body>
