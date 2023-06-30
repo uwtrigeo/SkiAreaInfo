@@ -48,34 +48,119 @@
     </nav>    
   </header>
   <div id="map"></div>
+  <nav id="menu"></nav>
   <script>
     mapboxgl.accessToken = 'pk.eyJ1IjoidHJpZ2VvIiwiYSI6ImNsZHZ5YW9tYjAyODAzdXM4bHlwbjhnNm4ifQ.kHTDG7XT7noaK7zzYwHYbA'; // replace this with your access token
 
     // Map
-    var map = new mapboxgl.Map({
+    const map = new mapboxgl.Map({
         container: 'map', // id of your map container
         style: 'mapbox://styles/mapbox/streets-v12', // your map style
         center: [-121.47, 46.93], // starting position
-        zoom: 12 // starting zoom
+        zoom: 12 // starting zoom,
     });
+    
 
     // Add Crystal_av.json to map
-    map.on('load', function() {
-      map.addSource('crystal', {
+    map.on('load', () => {
+      // Avalanche prone areas
+      map.addSource('avalanche', {
         type: 'geojson',
         data: 'data/Crystal_av.json'
       });
       map.addLayer({
-        id: 'crystal',
+        id: 'avalanche',
         type: 'fill',
-        source: 'crystal',
-        layout: {},
+        source: 'avalanche',
+        layout: {// Make the layer visible by default.
+        'visibility': 'visible'},
         paint: {
           'fill-color': 'red',
           'fill-opacity': 0.8
         }
       });
     });
+    // Terrain Run Type
+    map.on('load', function() {
+      // Terrain Run Type
+      map.addSource('terrain', {
+        type: 'geojson',
+        data: 'data/Crystal_terrain_Type.json'
+      });
+      map.addLayer({
+        id: 'terrain',
+        type: 'fill',
+        source: 'terrain',
+        layout: {// Make the layer visible by default.
+        'visibility': 'none'},
+        paint: {
+          'fill-color': ['match', ['get', 'Type'],
+              'Green', 'green',
+              'Blue', 'blue',
+              'Black', 'black',
+              'Double Black Diamond', 'grey',
+              /*else,*/ 'grey'
+            ],
+            'fill-opacity': 0.8,  // Set fill opacity if desired
+        }
+      });
+    });
+
+    // Toggle layers
+// After the last frame rendered before the map enters an "idle" state.
+map.on('idle', () => {
+    // If these two layers were not added to the map, abort
+    if (!map.getLayer('avalanche') || !map.getLayer('terrain')) {
+        return;
+    }
+     
+    // Enumerate ids of the layers.
+    const toggleableLayerIds = ['avalanche', 'terrain'];
+     
+    // Set up the corresponding toggle button for each layer.
+   for (const id of toggleableLayerIds) {
+        // Skip layers that already have a button set up.
+        if (document.getElementById(id)) {
+        continue;
+    }
+     
+        // Create a link.
+        const link = document.createElement('a');
+        link.id = id;
+        link.href = '#';
+        link.textContent = id;
+        link.className = 'active';
+        
+        // Show or hide layer when the toggle is clicked.
+        link.onclick = function (e) {
+            const clickedLayer = this.textContent;
+            e.preventDefault();
+            e.stopPropagation();
+        
+            const visibility = map.getLayoutProperty(
+                clickedLayer,
+                'visibility'
+            );
+        
+        // Toggle layer visibility by changing the layout object's visibility property.
+        if (visibility === 'visible') {
+            map.setLayoutProperty(clickedLayer, 'visibility', 'none');
+            this.className = '';
+            } else {
+                this.className = 'active';
+                map.setLayoutProperty(
+                    clickedLayer,
+                    'visibility',
+                    'visible'
+                );
+            }
+        };
+        
+        const layers = document.getElementById('menu');
+        layers.appendChild(link);
+    }
+});
+
 
     // Search bar
     map.addControl(
@@ -116,18 +201,9 @@
         map.setTerrain({ 'source': 'mapbox-dem', 'exaggeration': 1.5 });
         });
 
-    // add a sky layer that will show when the map is highly pitched
-    map.addLayer({
-        'id': 'sky',
-        'type': 'sky',
-        'paint': {
-        'sky-type': 'atmosphere',
-        'sky-atmosphere-sun': [0.0, 0.0],
-        'sky-atmosphere-sun-intensity': 15
-        }
-    });
+    
 
-    // Add a layer showing the places.
+  
     
     
 
