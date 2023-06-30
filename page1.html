@@ -49,6 +49,15 @@
   </header>
   <div id="map"></div>
   <nav id="menu"></nav>
+  <div id="legend">
+    <h4>Terrain Classification</h4>
+    <ul>
+        <li><hr class="class1"> Green 0-25%</li>
+        <li><hr class="class2"> Blue 25-40%</li>
+        <li><hr class="class3"> Black 40-50%</li>
+        <li><hr class="boundary"> Double Black >50%</li>
+    </ul>
+  </div>
   <script>
     mapboxgl.accessToken = 'pk.eyJ1IjoidHJpZ2VvIiwiYSI6ImNsZHZ5YW9tYjAyODAzdXM4bHlwbjhnNm4ifQ.kHTDG7XT7noaK7zzYwHYbA'; // replace this with your access token
 
@@ -66,7 +75,7 @@
       // Avalanche prone areas
       map.addSource('avalanche', {
         type: 'geojson',
-        data: 'data/Crystal_av.json'
+        data: 'data/av_prone.json'
       });
       map.addLayer({
         id: 'avalanche',
@@ -101,10 +110,12 @@
               'Double Black Diamond', 'grey',
               /*else,*/ 'grey'
             ],
-            'fill-opacity': 0.8,  // Set fill opacity if desired
+            'fill-opacity': 0.5,  // Set fill opacity if desired
         }
       });
     });
+
+    
 
     // Toggle layers
 // After the last frame rendered before the map enters an "idle" state.
