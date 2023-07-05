@@ -20,7 +20,7 @@
 </head>
 <body>
   <!-- link that loads the ski resort data from an external file -->
-  <script type="text/javascript" src="data/ski_resort_stats.js"></script>
+  <script type="text/javascript" src="data/ski_stats.js"></script>
   
   <!-- Navigation bar to access other maps -->
   <header>
@@ -126,14 +126,14 @@
     slider.noUiSlider.set(['0', '7500']);
 
     // Initialize skiStats as an empty L.geoJSON layer
-    var skiStats = L.geoJSON().addTo(map);
+    var skiAcres = L.geoJSON().addTo(map);
 
     slider.noUiSlider.on('update', function (values, handle) {
         var minAcres = parseFloat(values[0]);
         var maxAcres = parseFloat(values[1]);
 
         // Clear the current map layer
-        skiStats.clearLayers();
+        skiAcres.clearLayers();
 
         // Load GeoJSON from an external file
         L.geoJSON(ski_stats, {
@@ -165,8 +165,64 @@
                 marker.bindPopup("<b> Resort Name: </b>" + feature.properties.resort_name + "<br><b> Acres: </b>" + feature.properties.acres + "</p>");
                 return marker;
             }
-        }).addTo(skiStats);
+        }).addTo(skiAcres);
 
+    });
+    // Add features.properties.summit from ski_stats to show in overlays
+    // load GeoJSON from an external file
+    var skiSummit = L.geoJSON(ski_stats, {
+    pointToLayer: function (feature, latlng) {
+        // Your pointToLayer code
+        var circleSize;      
+        if (feature.properties.summit <= 1000) circleSize = 4;
+        else if (feature.properties.summit <= 2000) circleSize = 6;
+        else if (feature.properties.summit <= 5000) circleSize = 8;
+        else if (feature.properties.summit <= 8000) circleSize = 10;
+        else if (feature.properties.summit <= 10000) circleSize = 14;
+        else if (feature.properties.summit > 10000) circleSize = 18;
+        else circleSize = 0;
+
+        var circleColor;      
+        if (feature.properties.summit <= 1000) circleColor = '#3288bd';
+        else if (feature.properties.summit <= 2000) circleColor = '#99d594';
+        else if (feature.properties.summit <= 5000) circleColor = '#e6f598';
+        else if (feature.properties.summit <= 8000) circleColor = '#fee08b';
+        else if (feature.properties.summit <= 10000) circleColor = '#fc8d59';
+        else if (feature.properties.summit > 10000) circleColor = '#d53e4f';
+        else circleColor = '#737373';
+
+        var marker = L.circleMarker(latlng, {radius: circleSize, color: circleColor, weight: 1, opacity: 4, fillOpacity: 0.7});
+        marker.bindPopup("<b> Resort Name: </b>" + feature.properties.resort_name + "<br><b> Summit Elevation: </b>" + feature.properties.summit + "</p>");
+        return marker;
+      }
+    });
+
+    // Base Elevation from ski_stats geoJSON file
+    var skiBase = L.geoJSON(ski_stats, {
+    pointToLayer: function (feature, latlng) {
+        // Your pointToLayer code
+        var circleSize;      
+        if (feature.properties.base <= 1000) circleSize = 4;
+        else if (feature.properties.base <= 2000) circleSize = 6;
+        else if (feature.properties.base <= 5000) circleSize = 8;
+        else if (feature.properties.base <= 8000) circleSize = 10;
+        else if (feature.properties.base <= 10000) circleSize = 14;
+        else if (feature.properties.base > 10000) circleSize = 18;
+        else circleSize = 0;
+
+        var circleColor;      
+        if (feature.properties.base <= 1000) circleColor = '#3288bd';
+        else if (feature.properties.base <= 2000) circleColor = '#99d594';
+        else if (feature.properties.base <= 5000) circleColor = '#e6f598';
+        else if (feature.properties.base <= 8000) circleColor = '#fee08b';
+        else if (feature.properties.base <= 10000) circleColor = '#fc8d59';
+        else if (feature.properties.base > 10000) circleColor = '#d53e4f';
+        else circleColor = '#737373';
+
+        var marker = L.circleMarker(latlng, {radius: circleSize, color: circleColor, weight: 1, opacity: 4, fillOpacity: 0.7});
+        marker.bindPopup("<b> Resort Name: </b>" + feature.properties.resort_name + "<br><b> Base Elevation: </b>" + feature.properties.base + "</p>");
+        return marker;
+      }
     });
 
     // Base maps
@@ -180,7 +236,9 @@
 
     // Overlays
     var overlayMaps = {
-      "Ski Resorts": skiStats
+      "Size": skiAcres,
+      "Summit Elevation": skiSummit,
+      "Base Elevation": skiBase,
     };
 
     // Layer control
@@ -198,7 +256,7 @@
     // When the control is added to the map, insert a div with your title
     title.onAdd = function (map) {
         var div = L.DomUtil.create('div', 'info map-title');
-        div.innerHTML = '<h4>Ski Resorts by Acres</h4><p>Click on a resort to see its name and acreage.</p>';
+        div.innerHTML = '<h4>Ski Resort Size and Elevation</h4><p>Click on a resort see name and details.</p>';
         return div;
     };
 
