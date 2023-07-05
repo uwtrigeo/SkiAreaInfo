@@ -280,7 +280,7 @@
     L.control.scale().addTo(map);
 
     // Define a new control for the title
-    var title = L.control({position: 'topleft'});
+    var title = L.control({position: 'topleft', title: 'Map Title'});
 
     // When the control is added to the map, insert a div with your title
     title.onAdd = function (map) {
