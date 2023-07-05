@@ -135,7 +135,7 @@
         // Clear the current map layer
         skiAcres.clearLayers();
 
-        // Load GeoJSON from an external file
+        //Ski Area
         L.geoJSON(ski_stats, {
             filter: function (feature) {
                 // Only show features within the selected acre range
@@ -169,7 +169,7 @@
 
     });
     // Add features.properties.summit from ski_stats to show in overlays
-    // load GeoJSON from an external file
+    // Summit elevation
     var skiSummit = L.geoJSON(ski_stats, {
     pointToLayer: function (feature, latlng) {
         // Your pointToLayer code
@@ -225,6 +225,34 @@
       }
     });
 
+    // Vertical Drop from ski_stats geoJSON file
+    var skiVertical = L.geoJSON(ski_stats, {
+    pointToLayer: function (feature, latlng) {
+        // Your pointToLayer code
+        var circleSize;      
+        if (feature.properties.vertical <= 500) circleSize = 4;
+        else if (feature.properties.vertical <= 1000) circleSize = 6;
+        else if (feature.properties.vertical <= 2000) circleSize = 8;
+        else if (feature.properties.vertical <= 3000) circleSize = 10;
+        else if (feature.properties.vertical <= 4000) circleSize = 14;
+        else if (feature.properties.vertical > 4000) circleSize = 18;
+        else circleSize = 0;
+
+        var circleColor;      
+        if (feature.properties.vertical <= 500) circleColor = '#3288bd';
+        else if (feature.properties.vertical <= 1000) circleColor = '#99d594';
+        else if (feature.properties.vertical <= 2000) circleColor = '#e6f598';
+        else if (feature.properties.vertical <= 3000) circleColor = '#fee08b';
+        else if (feature.properties.vertical <= 4000) circleColor = '#fc8d59';
+        else if (feature.properties.vertical > 4000) circleColor = '#d53e4f';
+        else circleColor = '#737373';
+
+        var marker = L.circleMarker(latlng, {radius: circleSize, color: circleColor, weight: 1, opacity: 4, fillOpacity: 0.7});
+        marker.bindPopup("<b> Resort Name: </b>" + feature.properties.resort_name + "<br><b> Vertical Drop: </b>" + feature.properties.vertical + "</p>");
+        return marker;
+      }
+    });
+
     // Base maps
     var baseMaps = {
       "Stamen Toner Lite": Stamen_TonerLite,
@@ -239,6 +267,7 @@
       "Size": skiAcres,
       "Summit Elevation": skiSummit,
       "Base Elevation": skiBase,
+      "Vertical Drop": skiVertical
     };
 
     // Layer control
@@ -256,7 +285,7 @@
     // When the control is added to the map, insert a div with your title
     title.onAdd = function (map) {
         var div = L.DomUtil.create('div', 'info map-title');
-        div.innerHTML = '<h4>Ski Resort Size and Elevation</h4><p>Click on a resort see name and details.</p>';
+        div.innerHTML = '<h4>Size, Elevation, and Vertical Drop</h4><p>Click on a resort to see name and details.</p>';
         return div;
     };
 
