@@ -16,6 +16,10 @@
   <script src="https://cdn.jsdelivr.net/npm/nouislider@14.6.4/distribute/nouislider.min.js"></script>
   <!-- windy map -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <!-- grouped layer control -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet-groupedlayercontrol/dist/leaflet.groupedlayercontrol.min.css">
+  <script src="https://unpkg.com/leaflet-groupedlayercontrol/dist/leaflet.groupedlayercontrol.min.js"></script>
+
 
 </head>
 <body>
@@ -97,23 +101,23 @@
     });
 
     // Initialize noUiSlider
-    var slider = document.getElementById('slider');
-    var valuesForSlider = [0,100,200,300,500,1000,2000,3000,4000,5000,6000,7500];
+    var sliderSize = document.getElementById('slider');
+    var valuesForSliderSize = [0,100,200,300,500,1000,2000,3000,4000,5000,6000,7500];
 
     var format = {
     to: function(value) {
-        return valuesForSlider[Math.round(value)];
+        return valuesForSliderSize[Math.round(value)];
     },
     from: function (value) {
-        return valuesForSlider.indexOf(Number(value));
+        return valuesForSliderSize.indexOf(Number(value));
       }
     };
 
-    noUiSlider.create(slider, {
+    noUiSlider.create(sliderSize, {
         start: [0, 7500],
         orientation: 'vertical',
         // A linear range from 0 to 15 (16 values)
-        range: { min: 0, max: valuesForSlider.length - 1 },
+        range: { min: 0, max: valuesForSliderSize.length - 1 },
         // steps of 1
         step: 1,
         tooltips: true,
@@ -123,12 +127,12 @@
     });
 
     // The display values can be used to control the slider
-    slider.noUiSlider.set(['0', '7500']);
+    sliderSize.noUiSlider.set(['0', '7500']);
 
     // Initialize skiStats as an empty L.geoJSON layer
     var skiAcres = L.geoJSON();
 
-    slider.noUiSlider.on('update', function (values, handle) {
+    sliderSize.noUiSlider.on('update', function (values, handle) {
         var minAcres = parseFloat(values[0]);
         var maxAcres = parseFloat(values[1]);
 
@@ -270,8 +274,58 @@
       "Vertical Drop": skiVertical
     };
 
+    // Grouped Base maps
+    var groupedBaseMaps = {
+      "Map": {
+        "Stamen Toner Lite": Stamen_TonerLite,
+        "OpenStreetMap HOT": OpenStreetMap_HOT,
+        "OpenStreetMap": OSM,
+        "OSM Topo": OpenTopoMap,
+        "Esri World Imagery": Esri_WorldImagery
+      }
+    };
+
+    // Grouped Overlays
+    var groupedOverlays = {
+      "Ski Resort": {
+        "Size": skiAcres,
+        "Summit Elevation": skiSummit,
+        "Base Elevation": skiBase,
+        "Vertical Drop": skiVertical
+      }
+      
+    };
+    var options = {
+    // Make the "Landmarks" group exclusive (use radio inputs)
+    exclusiveGroups: ["Ski Resort"],
+    // Show a checkbox next to non-exclusive group labels for toggling all
+    groupCheckboxes: true,
+    collapsed: false
+  };
+
+  // Keep track of active overlays
+  var activeOverlays = new Set();
+
+  map.on('overlayadd', function(eventLayer) {
+      // When an overlay is added, add it to the activeOverlays set
+      activeOverlays.add(eventLayer.name);
+      // If 'Size' overlay is added, show the slider
+      if (eventLayer.name === 'Size') {
+          document.getElementById('slider').style.display = 'block';
+      }
+  });
+
+  map.on('overlayremove', function(eventLayer) {
+      // When an overlay is removed, remove it from the activeOverlays set
+      activeOverlays.delete(eventLayer.name);
+      // If 'Size' overlay is removed, hide the slider
+      if (eventLayer.name === 'Size') {
+          document.getElementById('slider').style.display = 'none';
+      }
+  });
+
     // Layer control
-    var layerControl = L.control.layers(baseMaps, overlayMaps).addTo(map);
+    var layerControl = L.control.groupedLayers(baseMaps, groupedOverlays, options).addTo(map);
 
     // Add base layer to the map
     baseMaps["Stamen Toner Lite"].addTo(map);
@@ -282,9 +336,6 @@
 
     // Define a new control for the title
     var title = L.control({position: 'topleft'});
-
-    // To disable
-slider.noUiSlider.disable(slider);
 
     // When the control is added to the map, insert a div with your title
     title.onAdd = function (map) {
