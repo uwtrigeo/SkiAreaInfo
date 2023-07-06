@@ -14,8 +14,8 @@
   <!-- no UI slider -->
   <link href="https://cdn.jsdelivr.net/npm/nouislider@14.6.4/distribute/nouislider.min.css" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/nouislider@14.6.4/distribute/nouislider.min.js"></script>
-  <!-- windy map -->
-  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <!-- wNumb -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/wnumb/1.2.0/wNumb.min.js"></script>
 
 </head>
 <body>
@@ -56,7 +56,10 @@
       </div>
     </nav>
   </header>
-  <div id="slider"></div>
+  <div id="skiAcres-slider" class="slider"></div>
+  <div id="skiSummit-slider" class="slider"></div>
+  <div id="skiBase-slider" class="slider"></div>
+  <div id="skiVertical-slider" class="slider"></div>
   <div id="map"></div>
   
 
@@ -96,78 +99,104 @@
       zoom: 5
     });
 
-    // Initialize noUiSlider
-    var slider = document.getElementById('slider');
-    var valuesForSlider = [0,100,200,300,500,1000,2000,3000,4000,5000,6000,7500];
+      // Initialize noUiSliders
+      const sliders = {
+        skiAcres: document.getElementById('skiAcres-slider'),
+        skiSummit: document.getElementById('skiSummit-slider'),
+        skiBase: document.getElementById('skiBase-slider'),
+        skiVertical: document.getElementById('skiVertical-slider')
+      };
+      
+      var format = wNumb({ decimals: 0 });
 
-    var format = {
-    to: function(value) {
-        return valuesForSlider[Math.round(value)];
-    },
-    from: function (value) {
-        return valuesForSlider.indexOf(Number(value));
+
+      function initializeSlider(sliderElement, min, max, startValues, step = 1) {
+          noUiSlider.create(sliderElement, {
+              start: startValues,
+              orientation: 'vertical',
+              // A linear range
+              range: { min, max },
+              // steps of 1
+              step,
+              tooltips: true,
+              format: format,
+              pips: { mode: 'steps', format: format },        
+          });
+
+          sliderElement.noUiSlider.set(startValues);
       }
-    };
 
-    noUiSlider.create(slider, {
-        start: [0, 7500],
-        orientation: 'vertical',
-        // A linear range from 0 to 15 (16 values)
-        range: { min: 0, max: valuesForSlider.length - 1 },
-        // steps of 1
-        step: 1,
-        tooltips: true,
-        format: format,
-        pips: { mode: 'steps', format: format },        
-              
+      // Initialize the sliders
+      initializeSlider(sliders.skiAcres, 0, 7500, [0, 7500]);
+      initializeSlider(sliders.skiSummit, 0, 10000, [0, 10000]);
+      initializeSlider(sliders.skiBase, 0, 10000, [0, 10000]);
+      initializeSlider(sliders.skiVertical, 0, 4000, [0, 4000]);
+
+      map.on('overlayadd', function(eventLayer){
+          switch (eventLayer.name) {
+              case "skiAcres":
+                  initializeSlider(sliders.skiAcres, 0, 7500, [0, 7500]);
+                  break;
+              case "skiSummit":
+                  initializeSlider(sliders.skiSummit, 0, 10000, [0, 10000]);
+                  break;
+              case "skiBase":
+                  initializeSlider(sliders.skiBase, 0, 10000, [0, 10000]);
+                  break;
+              case "skiVertical":
+                  initializeSlider(sliders.skiVertical, 0, 4000, [0, 4000]);
+                  break;
+          }
+      });
+
+      map.on('overlayremove', function(eventLayer){
+      switch (eventLayer.name) {
+          case "skiAcres":
+              sliders.skiAcres.noUiSlider.destroy();
+              break;
+          case "skiSummit":
+              sliders.skiSummit.noUiSlider.destroy();
+              break;
+          case "skiBase":
+              sliders.skiBase.noUiSlider.destroy();
+              break;
+          case "skiVertical":
+              sliders.skiVertical.noUiSlider.destroy();
+              break;
+      }
+  });
+
+
+
+    //Ski Area
+  var skiAcres =  L.geoJSON(ski_stats, {
+      pointToLayer: function (feature, latlng) {
+          // Your pointToLayer code
+          var circleSize;      
+          if (feature.properties.acres <= 100) circleSize = 4;
+          else if (feature.properties.acres <= 300) circleSize = 6;
+          else if (feature.properties.acres <= 800) circleSize = 8;
+          else if (feature.properties.acres <= 2000) circleSize = 10;
+          else if (feature.properties.acres <= 3000) circleSize = 14;
+          else if (feature.properties.acres >3000) circleSize = 18;
+          else circleSize = 0;
+
+          var circleColor;      
+          if (feature.properties.acres <= 100) circleColor = '#3288bd';
+          else if (feature.properties.acres <= 300) circleColor = '#99d594';
+          else if (feature.properties.acres <= 800) circleColor = '#e6f598';
+          else if (feature.properties.acres <= 2000) circleColor = '#fee08b';
+          else if (feature.properties.acres <= 3000) circleColor = '#fc8d59';
+          else if (feature.properties.acres > 3000) circleColor = '#d53e4f';
+          else circleColor = '#737373';
+
+          var marker = L.circleMarker(latlng, {radius: circleSize, color: circleColor, weight: 1, opacity: 4, fillOpacity: 0.7});
+          marker.bindPopup("<b> Resort Name: </b>" + feature.properties.resort_name + "<br><b> Acres: </b>" + feature.properties.acres + "</p>");
+          return marker;
+      }
     });
 
-    // The display values can be used to control the slider
-    slider.noUiSlider.set(['0', '7500']);
-
-    // Initialize skiStats as an empty L.geoJSON layer
-    var skiAcres = L.geoJSON().addTo(map);
-
-    slider.noUiSlider.on('update', function (values, handle) {
-        var minAcres = parseFloat(values[0]);
-        var maxAcres = parseFloat(values[1]);
-
-        // Clear the current map layer
-        skiAcres.clearLayers();
-
-        //Ski Area
-        L.geoJSON(ski_stats, {
-            filter: function (feature) {
-                // Only show features within the selected acre range
-                return feature.properties.acres >= minAcres && feature.properties.acres <= maxAcres;
-            },
-            pointToLayer: function (feature, latlng) {
-                // Your pointToLayer code
-                var circleSize;      
-                if (feature.properties.acres <= 100) circleSize = 4;
-                else if (feature.properties.acres <= 300) circleSize = 6;
-                else if (feature.properties.acres <= 800) circleSize = 8;
-                else if (feature.properties.acres <= 2000) circleSize = 10;
-                else if (feature.properties.acres <= 3000) circleSize = 14;
-                else if (feature.properties.acres <= 7500) circleSize = 18;
-                else circleSize = 0;
-
-                var circleColor;      
-                if (feature.properties.acres <= 100) circleColor = '#3288bd';
-                else if (feature.properties.acres <= 300) circleColor = '#99d594';
-                else if (feature.properties.acres <= 800) circleColor = '#e6f598';
-                else if (feature.properties.acres <= 2000) circleColor = '#fee08b';
-                else if (feature.properties.acres <= 3000) circleColor = '#fc8d59';
-                else if (feature.properties.acres > 3000) circleColor = '#d53e4f';
-                else circleColor = '#737373';
-
-                var marker = L.circleMarker(latlng, {radius: circleSize, color: circleColor, weight: 1, opacity: 4, fillOpacity: 0.7});
-                marker.bindPopup("<b> Resort Name: </b>" + feature.properties.resort_name + "<br><b> Acres: </b>" + feature.properties.acres + "</p>");
-                return marker;
-            }
-        }).addTo(skiAcres);
-
-    });
+    
     // Add features.properties.summit from ski_stats to show in overlays
     // Summit elevation
     var skiSummit = L.geoJSON(ski_stats, {
@@ -273,8 +302,9 @@
     // Layer control
     var layerControl = L.control.layers(baseMaps, overlayMaps).addTo(map);
 
-    // Add base layer to the map
+    // Add base layer & overlay to the map
     baseMaps["Stamen Toner Lite"].addTo(map);
+    overlayMaps["Size"].addTo(map);
     
     // add scale bar
     L.control.scale().addTo(map);
@@ -292,7 +322,41 @@
     // Add the title to the map
     title.addTo(map);
 
+    // Error checking
+    if(typeof L === "undefined"){
+    console.error('Leaflet library is not loaded');
+    }
+    else {
+      console.log('Map is ready');
 
+    }
+
+    if(sliders.skiAcres !== undefined){
+  initializeSlider(sliders.skiAcres, 0, 7500, [0, 7500]);
+}else{
+  console.error('skiAcres-slider is not defined');
+}
+if(sliders.skiVertical !== undefined){
+  initializeSlider(sliders.skiVertical, 0, 5000, [0, 5000]);
+}else{
+  console.error('skiVertical-slider is not defined');
+}
+if(sliders.skiSummit !== undefined){
+  initializeSlider(sliders.skiSummit, 0, 15000, [0, 15000]);
+}else{
+  console.error('skiSummit-slider is not defined');
+}
+if(sliders.skiBase !== undefined){
+  initializeSlider(sliders.skiBase, 0, 10000, [0, 10000]);
+}else{
+  console.error('skiBase-slider is not defined');
+}
+
+try{
+  initializeSlider(sliders.skiAcres, 0, 7500, [0, 7500]);
+}catch(e){
+  console.error('Error initializing skiAcres-slider: ', e);
+}
 
 
   </script>

@@ -96,78 +96,36 @@
       zoom: 5
     });
 
-    // Initialize noUiSlider
-    var slider = document.getElementById('slider');
-    var valuesForSlider = [0,100,200,300,500,1000,2000,3000,4000,5000,6000,7500];
-
-    var format = {
-    to: function(value) {
-        return valuesForSlider[Math.round(value)];
-    },
-    from: function (value) {
-        return valuesForSlider.indexOf(Number(value));
-      }
-    };
-
-    noUiSlider.create(slider, {
-        start: [0, 7500],
-        orientation: 'vertical',
-        // A linear range from 0 to 15 (16 values)
-        range: { min: 0, max: valuesForSlider.length - 1 },
-        // steps of 1
-        step: 1,
-        tooltips: true,
-        format: format,
-        pips: { mode: 'steps', format: format },        
-              
-    });
-
-    // The display values can be used to control the slider
-    slider.noUiSlider.set(['0', '7500']);
-
-    // Initialize skiStats as an empty L.geoJSON layer
-    var skiAcres = L.geoJSON().addTo(map);
-
-    slider.noUiSlider.on('update', function (values, handle) {
-        var minAcres = parseFloat(values[0]);
-        var maxAcres = parseFloat(values[1]);
-
-        // Clear the current map layer
-        skiAcres.clearLayers();
+  
 
         //Ski Area
-        L.geoJSON(ski_stats, {
-            filter: function (feature) {
-                // Only show features within the selected acre range
-                return feature.properties.acres >= minAcres && feature.properties.acres <= maxAcres;
-            },
-            pointToLayer: function (feature, latlng) {
-                // Your pointToLayer code
-                var circleSize;      
-                if (feature.properties.acres <= 100) circleSize = 4;
-                else if (feature.properties.acres <= 300) circleSize = 6;
-                else if (feature.properties.acres <= 800) circleSize = 8;
-                else if (feature.properties.acres <= 2000) circleSize = 10;
-                else if (feature.properties.acres <= 3000) circleSize = 14;
-                else if (feature.properties.acres <= 7500) circleSize = 18;
-                else circleSize = 0;
+      var skiAcres =  L.geoJSON(ski_stats, {
+      pointToLayer: function (feature, latlng) {
+            // Your pointToLayer code
+            var circleSize;      
+            if (feature.properties.acres <= 100) circleSize = 4;
+            else if (feature.properties.acres <= 300) circleSize = 6;
+            else if (feature.properties.acres <= 800) circleSize = 8;
+            else if (feature.properties.acres <= 2000) circleSize = 10;
+            else if (feature.properties.acres <= 3000) circleSize = 14;
+            else if (feature.properties.acres <= 7500) circleSize = 18;
+            else circleSize = 0;
 
-                var circleColor;      
-                if (feature.properties.acres <= 100) circleColor = '#3288bd';
-                else if (feature.properties.acres <= 300) circleColor = '#99d594';
-                else if (feature.properties.acres <= 800) circleColor = '#e6f598';
-                else if (feature.properties.acres <= 2000) circleColor = '#fee08b';
-                else if (feature.properties.acres <= 3000) circleColor = '#fc8d59';
-                else if (feature.properties.acres > 3000) circleColor = '#d53e4f';
-                else circleColor = '#737373';
+            var circleColor;      
+            if (feature.properties.acres <= 100) circleColor = '#3288bd';
+            else if (feature.properties.acres <= 300) circleColor = '#99d594';
+            else if (feature.properties.acres <= 800) circleColor = '#e6f598';
+            else if (feature.properties.acres <= 2000) circleColor = '#fee08b';
+            else if (feature.properties.acres <= 3000) circleColor = '#fc8d59';
+            else if (feature.properties.acres > 3000) circleColor = '#d53e4f';
+            else circleColor = '#737373';
 
-                var marker = L.circleMarker(latlng, {radius: circleSize, color: circleColor, weight: 1, opacity: 4, fillOpacity: 0.7});
-                marker.bindPopup("<b> Resort Name: </b>" + feature.properties.resort_name + "<br><b> Acres: </b>" + feature.properties.acres + "</p>");
-                return marker;
-            }
-        }).addTo(skiAcres);
-
+            var marker = L.circleMarker(latlng, {radius: circleSize, color: circleColor, weight: 1, opacity: 4, fillOpacity: 0.7});
+            marker.bindPopup("<b> Resort Name: </b>" + feature.properties.resort_name + "<br><b> Acres: </b>" + feature.properties.acres + "</p>");
+            return marker;
+        }
     });
+
     // Add features.properties.summit from ski_stats to show in overlays
     // Summit elevation
     var skiSummit = L.geoJSON(ski_stats, {
@@ -275,6 +233,7 @@
 
     // Add base layer to the map
     baseMaps["Stamen Toner Lite"].addTo(map);
+    overlayMaps["Size"].addTo(map);
     
     // add scale bar
     L.control.scale().addTo(map);
