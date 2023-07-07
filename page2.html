@@ -158,7 +158,7 @@
             else if (feature.properties.acres <= 800) circleSize = 8;
             else if (feature.properties.acres <= 2000) circleSize = 10;
             else if (feature.properties.acres <= 3000) circleSize = 14;
-            else if (feature.properties.acres <= 7500) circleSize = 18;
+            else if (feature.properties.acres > 3000) circleSize = 18;
             else circleSize = 0;
 
             var circleColor;      

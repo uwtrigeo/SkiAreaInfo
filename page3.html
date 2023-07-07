@@ -105,7 +105,7 @@
 
     // Initialize noUiSlider for size layer
     var sliderSize1 = document.getElementById('slider1');
-    var valuesForsliderSize1 = [0,100,200,300,500,1000,2000,3000,4000,5000,6000,7500];
+    var valuesForsliderSize1 = [0,100,150,200,250,300,400,450,550,600,650,700];
 
     var format1 = {
     to: function(value) {
@@ -118,7 +118,7 @@
 
     var slider1 = document.getElementById('slider1');
     noUiSlider.create(slider1, {
-        start: [0, 7500],
+        start: [0, 700],
         orientation: 'vertical',
         // A linear range from 0 to 15 (16 values)
         range: { min: 0, max: valuesForsliderSize1.length - 1 },
@@ -131,49 +131,52 @@
     });
 
     // The display values can be used to control the slider
-    sliderSize1.noUiSlider.set(['0', '7500']);
+    sliderSize1.noUiSlider.set(['0', '700']);
 
     // Initialize skiStats as an empty L.geoJSON layer
-    var skiAcres = L.geoJSON();
+    var snowfallAverage = L.geoJSON();
 
     sliderSize1.noUiSlider.on('update', function (values, handle) {
         var minAcres = parseFloat(values[0]);
         var maxAcres = parseFloat(values[1]);
 
     // Clear the current map layer
-    skiAcres.clearLayers();
+    snowfallAverage.clearLayers();
 
     //Ski Area
     L.geoJSON(ski_stats, {
         filter: function (feature) {
-            // Only show features within the selected acre range
-            return feature.properties.acres >= minAcres && feature.properties.acres <= maxAcres;
+            // Only show features within the selected average snowfall range
+            return feature.properties.Season_Average >= minAcres && feature.properties.Season_Average <= maxAcres;
         },
         pointToLayer: function (feature, latlng) {
             // Your pointToLayer code
-            var circleSize;      
-            if (feature.properties.acres <= 100) circleSize = 4;
-            else if (feature.properties.acres <= 300) circleSize = 6;
-            else if (feature.properties.acres <= 800) circleSize = 8;
-            else if (feature.properties.acres <= 2000) circleSize = 10;
-            else if (feature.properties.acres <= 3000) circleSize = 14;
-            else if (feature.properties.acres <= 7500) circleSize = 18;
+            var circleSize; 
+            if (feature.properties.Season_Average == null) circleSize = 2;     
+            else if (feature.properties.Season_Average <= 100) circleSize = 4;
+            else if (feature.properties.Season_Average <= 200) circleSize = 6;
+            else if (feature.properties.Season_Average <= 300) circleSize = 8;
+            else if (feature.properties.Season_Average <= 400) circleSize = 10;
+            else if (feature.properties.Season_Average <= 500) circleSize = 14;
+            else if (feature.properties.Season_Average > 500) circleSize = 18;
             else circleSize = 0;
 
-            var circleColor;      
-            if (feature.properties.acres <= 100) circleColor = '#3288bd';
-            else if (feature.properties.acres <= 300) circleColor = '#99d594';
-            else if (feature.properties.acres <= 800) circleColor = '#e6f598';
-            else if (feature.properties.acres <= 2000) circleColor = '#fee08b';
-            else if (feature.properties.acres <= 3000) circleColor = '#fc8d59';
-            else if (feature.properties.acres > 3000) circleColor = '#d53e4f';
+            var circleColor;
+            if (feature.properties.Season_Average == null) circleColor = '#808080';      
+            else if (feature.properties.Season_Average <= 100) circleColor = '#3288bd';
+            else if (feature.properties.Season_Average <= 100) circleColor = '#3288bd';
+            else if (feature.properties.Season_Average <= 200) circleColor = '#99d594';
+            else if (feature.properties.Season_Average <= 300) circleColor = '#e6f598';
+            else if (feature.properties.Season_Average <= 400) circleColor = '#fee08b';
+            else if (feature.properties.Season_Average <= 500) circleColor = '#fc8d59';
+            else if (feature.properties.Season_Average > 500) circleColor = '#d53e4f';
             else circleColor = '#737373';
 
             var marker = L.circleMarker(latlng, {radius: circleSize, color: circleColor, weight: 1, opacity: 4, fillOpacity: 0.7});
-            marker.bindPopup("<b> Resort Name: </b>" + feature.properties.resort_name + "<br><b> Acres: </b>" + feature.properties.acres + "</p>");
+            marker.bindPopup("<b> Resort Name: </b>" + feature.properties.resort_name + "<br><b> Snowfall Average: </b>" + feature.properties.Season_Average + "</p>");
             return marker;
         }
-    }).addTo(skiAcres);
+    }).addTo(snowfallAverage);
 
     });
 
@@ -412,27 +415,27 @@
 
     // Overlays
     var overlayMaps = {
-      "Size": skiAcres,
+      "Average Snowfall": snowfallAverage,
       "Summit Elevation": skiSummit,
       "Base Elevation": skiBase,
       "Vertical Drop": skiVertical
     };
 
-    // Grouped Base maps
-    var groupedBaseMaps = {
-      "Map": {
-        "Stamen Toner Lite": Stamen_TonerLite,
-        "OpenStreetMap HOT": OpenStreetMap_HOT,
-        "OpenStreetMap": OSM,
-        "OSM Topo": OpenTopoMap,
-        "Esri World Imagery": Esri_WorldImagery
-      }
-    };
+    // // Grouped Base maps
+    // var groupedBaseMaps = {
+    //   "Map": {
+    //     "Stamen Toner Lite": Stamen_TonerLite,
+    //     "OpenStreetMap HOT": OpenStreetMap_HOT,
+    //     "OpenStreetMap": OSM,
+    //     "OSM Topo": OpenTopoMap,
+    //     "Esri World Imagery": Esri_WorldImagery
+    //   }
+    // };
 
     // Grouped Overlays
     var groupedOverlays = {
       "Ski Resort": {
-        "Size": skiAcres,
+        "Average Snowfall": snowfallAverage,
         "Summit Elevation": skiSummit,
         "Base Elevation": skiBase,
         "Vertical Drop": skiVertical
@@ -452,7 +455,7 @@
 
   // Mapping between overlay names and slider IDs
   var overlaySliderMap = {
-    'Size': 'slider1',
+    'Average Snowfall': 'slider1',
     'Summit Elevation': 'slider2',
     'Base Elevation': 'slider3',
     'Vertical Drop': 'slider4'
@@ -496,7 +499,7 @@
 
     // Add base layer to the map
     baseMaps["Stamen Toner Lite"].addTo(map);
-    overlayMaps["Size"].addTo(map);
+    overlayMaps["Average Snowfall"].addTo(map);
     
     // add scale bar
     L.control.scale().addTo(map);
