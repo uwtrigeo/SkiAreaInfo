@@ -64,6 +64,7 @@
   <div id="slider1"></div>
   <div id="slider2"></div>
   <div id="slider3"></div>
+  <div id="slider4"></div>
   <div id="map"></div>
   
 
@@ -326,13 +327,55 @@
 
     });
 
+    // Initialize noUiSlider for vertical layer
+    var sliderSize4 = document.getElementById('slider4');
+    var valuesForsliderSize4 = [0,100,200,400,600,800,1000,1500,2000,3000,4000,5000];
 
+    var format4 = {
+    to: function(value) {
+        return valuesForsliderSize4[Math.round(value)];
+    },
+    from: function (value) {
+        return valuesForsliderSize4.indexOf(Number(value));
+      }
+    };
 
-    // Vertical Drop from ski_stats geoJSON file
-    var skiVertical = L.geoJSON(ski_stats, {
-    pointToLayer: function (feature, latlng) {
-        // Your pointToLayer code
-        var circleSize;      
+    var slider4 = document.getElementById('slider4');
+    noUiSlider.create(slider4, {
+        start: [0, 5000],
+        orientation: 'vertical',
+        // A linear range from 0 to 15 (16 values)
+        range: { min: 0, max: valuesForsliderSize4.length - 1 },
+        // steps of 1
+        step: 1,
+        tooltips: true,
+        format: format4,
+        pips: { mode: 'steps', format: format4 },        
+              
+    });
+
+    // The display values can be used to control the slider
+    sliderSize4.noUiSlider.set(['0', '5000']);
+
+    // Initialize skiStats as an empty L.geoJSON layer
+    var skiVertical = L.geoJSON();
+
+    sliderSize4.noUiSlider.on('update', function (values, handle) {
+        var minVertical = parseFloat(values[0]);
+        var maxVertical = parseFloat(values[1]);
+
+    // Clear the current map layer
+    skiVertical.clearLayers();
+
+    //Ski summit
+    L.geoJSON(ski_stats, {
+        filter: function (feature) {
+            // Only show features within the selected acre range
+            return feature.properties.vertical >= minVertical && feature.properties.vertical <= maxVertical;
+        },
+        pointToLayer: function (feature, latlng) {
+            // Your pointToLayer code
+            var circleSize;      
         if (feature.properties.vertical <= 500) circleSize = 4;
         else if (feature.properties.vertical <= 1000) circleSize = 6;
         else if (feature.properties.vertical <= 2000) circleSize = 8;
@@ -353,8 +396,11 @@
         var marker = L.circleMarker(latlng, {radius: circleSize, color: circleColor, weight: 1, opacity: 4, fillOpacity: 0.7});
         marker.bindPopup("<b> Resort Name: </b>" + feature.properties.resort_name + "<br><b> Vertical Drop: </b>" + feature.properties.vertical + "</p>");
         return marker;
-      }
+            }
+    }).addTo(skiVertical);
+
     });
+
 
     // Base maps
     var baseMaps = {
@@ -409,7 +455,9 @@
   var overlaySliderMap = {
     'Size': 'slider1',
     'Summit Elevation': 'slider2',
-    'Base Elevation': 'slider3'
+    'Base Elevation': 'slider3',
+    'Vertical Drop': 'slider4'
+  
   };
 
   // Function to handle the display style of the sliders

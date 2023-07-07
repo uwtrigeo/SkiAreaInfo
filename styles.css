@@ -76,6 +76,20 @@ z-index: 1000; /* Adjust this as needed */
   color: black;
 }
 
+#slider4 {
+  position: fixed;
+  right: 4.5%;
+  bottom: 6%;
+  width: 15px;
+  height: 300px;
+  z-index: 1000; /* Adjust this as needed */
+  }
+  
+/* noUISlider numbers changed color to black */
+#slider4 .noUi-value {
+  color: black;
+}
+
 /* Toggle layers Mapbox*/
 #menu {
   background: #fff;
