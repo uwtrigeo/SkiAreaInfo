@@ -63,6 +63,7 @@
   <div id="slider"></div>
   <div id="slider1"></div>
   <div id="slider2"></div>
+  <div id="slider3"></div>
   <div id="map"></div>
   
 
@@ -176,6 +177,7 @@
 
     });
 
+
     // Initialize noUiSlider for summit layer
     var sliderSize2 = document.getElementById('slider2');
     var valuesForsliderSize2 = [0,100,1000,2000,3000,4000,5000,6000,8000,10000,12000,14000];
@@ -250,34 +252,81 @@
 
     });
     
+    // Initialize noUiSlider for base layer
+    var sliderSize3 = document.getElementById('slider3');
+    var valuesForsliderSize3 = [0,100,1000,2000,3000,4000,5000,6000,8000,9000,10000,11000];
 
-    // Base Elevation from ski_stats geoJSON file
-    var skiBase = L.geoJSON(ski_stats, {
-    pointToLayer: function (feature, latlng) {
-        // Your pointToLayer code
-        var circleSize;      
-        if (feature.properties.base <= 1000) circleSize = 4;
-        else if (feature.properties.base <= 2000) circleSize = 6;
-        else if (feature.properties.base <= 5000) circleSize = 8;
-        else if (feature.properties.base <= 8000) circleSize = 10;
-        else if (feature.properties.base <= 10000) circleSize = 14;
-        else if (feature.properties.base > 10000) circleSize = 18;
-        else circleSize = 0;
-
-        var circleColor;      
-        if (feature.properties.base <= 1000) circleColor = '#3288bd';
-        else if (feature.properties.base <= 2000) circleColor = '#99d594';
-        else if (feature.properties.base <= 5000) circleColor = '#e6f598';
-        else if (feature.properties.base <= 8000) circleColor = '#fee08b';
-        else if (feature.properties.base <= 10000) circleColor = '#fc8d59';
-        else if (feature.properties.base > 10000) circleColor = '#d53e4f';
-        else circleColor = '#737373';
-
-        var marker = L.circleMarker(latlng, {radius: circleSize, color: circleColor, weight: 1, opacity: 4, fillOpacity: 0.7});
-        marker.bindPopup("<b> Resort Name: </b>" + feature.properties.resort_name + "<br><b> Base Elevation: </b>" + feature.properties.base + "</p>");
-        return marker;
+    var format3 = {
+    to: function(value) {
+        return valuesForsliderSize3[Math.round(value)];
+    },
+    from: function (value) {
+        return valuesForsliderSize3.indexOf(Number(value));
       }
+    };
+
+    var slider3 = document.getElementById('slider3');
+    noUiSlider.create(slider3, {
+        start: [0, 11000],
+        orientation: 'vertical',
+        // A linear range from 0 to 15 (16 values)
+        range: { min: 0, max: valuesForsliderSize3.length - 1 },
+        // steps of 1
+        step: 1,
+        tooltips: true,
+        format: format3,
+        pips: { mode: 'steps', format: format3 },        
+              
     });
+
+    // The display values can be used to control the slider
+    sliderSize3.noUiSlider.set(['0', '11000']);
+
+    // Initialize skiStats as an empty L.geoJSON layer
+    var skiBase = L.geoJSON();
+
+    sliderSize3.noUiSlider.on('update', function (values, handle) {
+        var minBase = parseFloat(values[0]);
+        var maxBase = parseFloat(values[1]);
+
+    // Clear the current map layer
+    skiBase.clearLayers();
+
+    //Ski summit
+    L.geoJSON(ski_stats, {
+        filter: function (feature) {
+            // Only show features within the selected acre range
+            return feature.properties.base >= minBase && feature.properties.base <= maxBase;
+        },
+        pointToLayer: function (feature, latlng) {
+            // Your pointToLayer code
+            var circleSize;      
+            if (feature.properties.base <= 1000) circleSize = 4;
+            else if (feature.properties.base <= 2000) circleSize = 6;
+            else if (feature.properties.base <= 5000) circleSize = 8;
+            else if (feature.properties.base <= 8000) circleSize = 10;
+            else if (feature.properties.base <= 10000) circleSize = 14;
+            else if (feature.properties.base > 10000) circleSize = 18;
+            else circleSize = 0;
+
+            var circleColor;      
+            if (feature.properties.base <= 1000) circleColor = '#3288bd';
+            else if (feature.properties.base <= 2000) circleColor = '#99d594';
+            else if (feature.properties.base <= 5000) circleColor = '#e6f598';
+            else if (feature.properties.base <= 8000) circleColor = '#fee08b';
+            else if (feature.properties.base <= 10000) circleColor = '#fc8d59';
+            else if (feature.properties.base > 10000) circleColor = '#d53e4f';
+            else circleColor = '#737373';
+
+            var marker = L.circleMarker(latlng, {radius: circleSize, color: circleColor, weight: 1, opacity: 4, fillOpacity: 0.7});
+            marker.bindPopup("<b> Resort Name: </b>" + feature.properties.resort_name + "<br><b> Base Elevation: </b>" + feature.properties.base + "</p>");
+            return marker;
+            }
+    }).addTo(skiBase);
+
+    });
+
+
 
     // Vertical Drop from ski_stats geoJSON file
     var skiVertical = L.geoJSON(ski_stats, {
@@ -359,7 +408,8 @@
   // Mapping between overlay names and slider IDs
   var overlaySliderMap = {
     'Size': 'slider1',
-    'Summit Elevation': 'slider2'
+    'Summit Elevation': 'slider2',
+    'Base Elevation': 'slider3'
   };
 
   // Function to handle the display style of the sliders
