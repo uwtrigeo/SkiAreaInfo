@@ -6,8 +6,16 @@
   <title>Page Title</title>
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
   <link rel="stylesheet" href="styles.css">
+  <!-- External CSS and JavaScript files -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nouislider@14.6.4/distribute/nouislider.min.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet-groupedlayercontrol/dist/leaflet.groupedlayercontrol.min.css">
 </head>
 <body>
+  <!-- Link to the ski resort data -->
+  <script type="text/javascript" src="data/ski_stats.js"></script>
+  
+  <!-- Navigation bar -->
   <header>
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
       <a class="navbar-brand" href="index.html">My Ski Resort</a>
@@ -23,7 +31,7 @@
             <a class="nav-link" href="page1.html">Page 1</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="page2.html">Page 2</a>
+            <a class="nav-link" href="page2.html"><b>Page 2</b></a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="page3.html">Page 3</a>
@@ -41,3 +49,22 @@
       </div>
     </nav>
   </header>
+
+  <!-- Slider containers -->
+  <div id="slider1"></div>
+  <div id="slider2"></div>
+  <div id="slider3"></div>
+  <div id="slider4"></div>
+
+  <!-- Map container -->
+  <div id="map"></div>
+
+  <!-- External JavaScript dependencies -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/nouislider@14.6.4/distribute/nouislider.min.js"></script>
+  <script src="https://unpkg.com/leaflet-groupedlayercontrol/dist/leaflet.groupedlayercontrol.min.js"></script>
+
+  <!-- Main JavaScript code -->
+  <script src="main.js"></script>
+</body>
+</html>

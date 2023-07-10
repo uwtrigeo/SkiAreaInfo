@@ -19,6 +19,10 @@
   <!-- grouped layer control -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet-groupedlayercontrol/dist/leaflet.groupedlayercontrol.min.css">
   <script src="https://unpkg.com/leaflet-groupedlayercontrol/dist/leaflet.groupedlayercontrol.min.js"></script>
+  <!-- leaflet legend -->
+  <link rel="stylesheet" href="legend/leaflet.legend.css" />
+	<script src="legend/leaflet.legend.js"></script>
+  
 
 
 </head>
@@ -121,9 +125,7 @@
     noUiSlider.create(slider1, {
         start: [0, 7500],
         orientation: 'vertical',
-        // A linear range from 0 to 15 (16 values)
         range: { min: 0, max: valuesForsliderSize1.length - 1 },
-        // steps of 1
         step: 1,
         tooltips: true,
         format: format1,
@@ -196,9 +198,7 @@
     noUiSlider.create(slider2, {
         start: [0, 14000],
         orientation: 'vertical',
-        // A linear range from 0 to 15 (16 values)
         range: { min: 0, max: valuesForsliderSize2.length - 1 },
-        // steps of 1
         step: 1,
         tooltips: true,
         format: format2,
@@ -270,9 +270,7 @@
     noUiSlider.create(slider3, {
         start: [0, 11000],
         orientation: 'vertical',
-        // A linear range from 0 to 15 (16 values)
         range: { min: 0, max: valuesForsliderSize3.length - 1 },
-        // steps of 1
         step: 1,
         tooltips: true,
         format: format3,
@@ -344,9 +342,7 @@
     noUiSlider.create(slider4, {
         start: [0, 5000],
         orientation: 'vertical',
-        // A linear range from 0 to 15 (16 values)
         range: { min: 0, max: valuesForsliderSize4.length - 1 },
-        // steps of 1
         step: 1,
         tooltips: true,
         format: format4,
@@ -446,47 +442,47 @@
     // Show a checkbox next to non-exclusive group labels for toggling all
     groupCheckboxes: true,
     collapsed: false
-  };
+    };
 
-  // Keep track of active overlays and show slider with relevant layer
-  var activeOverlays = new Set();
+    // Keep track of active overlays and show slider with relevant layer
+    var activeOverlays = new Set();
 
-  // Mapping between overlay names and slider IDs
-  var overlaySliderMap = {
-    'Size': 'slider1',
-    'Summit Elevation': 'slider2',
-    'Base Elevation': 'slider3',
-    'Vertical Drop': 'slider4'
-  
-  };
+    // Mapping between overlay names and slider IDs
+    var overlaySliderMap = {
+      'Size': 'slider1',
+      'Summit Elevation': 'slider2',
+      'Base Elevation': 'slider3',
+      'Vertical Drop': 'slider4'
+    
+    };
 
-  // Function to handle the display style of the sliders
-  function handleSliderDisplay(overlayName, displayStyle) {
-    var sliderId = overlaySliderMap[overlayName];
-    if (sliderId) {
-      document.getElementById(sliderId).style.display = displayStyle;
-    }
-  }
-
-  // Function to hide all sliders except the one associated with the given overlay
-  function hideOtherSliders(overlayName) {
-    for (var overlay in overlaySliderMap) {
-      if (overlay !== overlayName) {
-        handleSliderDisplay(overlay, 'none');
+    // Function to handle the display style of the sliders
+    function handleSliderDisplay(overlayName, displayStyle) {
+      var sliderId = overlaySliderMap[overlayName];
+      if (sliderId) {
+        document.getElementById(sliderId).style.display = displayStyle;
       }
     }
-  }
 
-  map.on('overlayadd', function(eventLayer) {
-    activeOverlays.add(eventLayer.name);
-    handleSliderDisplay(eventLayer.name, 'block');
-    hideOtherSliders(eventLayer.name);
-  });
+    // Function to hide all sliders except the one associated with the given overlay
+    function hideOtherSliders(overlayName) {
+      for (var overlay in overlaySliderMap) {
+        if (overlay !== overlayName) {
+          handleSliderDisplay(overlay, 'none');
+        }
+      }
+    }
 
-  map.on('overlayremove', function(eventLayer) {
-    activeOverlays.delete(eventLayer.name);
-    handleSliderDisplay(eventLayer.name, 'none');
-  });
+    map.on('overlayadd', function(eventLayer) {
+      activeOverlays.add(eventLayer.name);
+      handleSliderDisplay(eventLayer.name, 'block');
+      hideOtherSliders(eventLayer.name);
+    });
+
+    map.on('overlayremove', function(eventLayer) {
+      activeOverlays.delete(eventLayer.name);
+      handleSliderDisplay(eventLayer.name, 'none');
+    });
 
 
 
@@ -512,9 +508,92 @@
         return div;
     };
 
+      
     // Add the title to the map
     title.addTo(map);
 
+    // ski resort opened legend
+    var Legend = L.control.Legend({
+        position: "bottomleft",
+        title: "Small to Large",
+        opacity:0.50,
+        symbolWidth: 40,
+        symbolHeight: 35,
+        collapsed: false,
+        legends: [
+        {
+          label: "Small",
+          type: "circle",
+          radius: 4,
+          fillColor: "#3288bd",
+          color: "#000",
+          fill: true,
+          fillOpacity: "0.8",
+          weight: 1,
+        },
+        {
+          label: "",
+          type: "circle",
+          radius: 6,
+          fillColor: "#99d594",
+          color: "#000",
+          fill: true,
+          fillOpacity: "0.8",
+          weight: 1,
+        },
+        {
+          label: "",
+          type: "circle",
+          radius: 8,
+          fillColor: "#e6f598",
+          color: "#000",
+          fill: true,
+          fillOpacity: "0.8",
+          weight: 1,
+        },
+        {
+          label: "",
+          type: "circle",
+          radius: 10,
+          fillColor: "#fee08b",
+          color: "#000",
+          fill: true,
+          fillOpacity: "1",
+          weight: 1,
+        },
+        {
+          label: "",
+          type: "circle",
+          radius: 14,
+          fillColor: "#fc8d59",
+          color: "#000",
+          fill: true,
+          fillOpacity: "0.8",
+          weight: 1,
+        },
+        {
+          label: "Largest",
+          type: "circle",
+          radius: 18,
+          fillColor: "#d53e4f",
+          color: "#000",
+          fill: true,
+          fillOpacity: "0.8",
+          weight: 1,
+        },
+        {
+          label: "null",
+          type: "circle",
+          radius: 4,
+          fillColor: "#737373",
+          color: "#000",
+          fill: true,
+          fillOpacity: "0.8",
+          weight: 1,
+        }
+        
+    ]
+    }).addTo(map);
 
 
 

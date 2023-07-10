@@ -143,7 +143,7 @@
     // Clear the current map layer
     snowfallAverage.clearLayers();
 
-    //Ski Area
+    //Average Snowfall
     L.geoJSON(ski_stats, {
         filter: function (feature) {
             // Only show features within the selected average snowfall range
@@ -490,9 +490,6 @@
     handleSliderDisplay(eventLayer.name, 'none');
   });
 
-
-
-  
 
     // Layer control
     var layerControl = L.control.groupedLayers(baseMaps, groupedOverlays, options).addTo(map);
