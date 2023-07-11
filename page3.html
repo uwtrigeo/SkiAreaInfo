@@ -44,10 +44,10 @@
             <a class="nav-link" href="page2.html">Page 2</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="page3.html"><b>Page 3</b></a>
+            <a class="nav-link" href="page3.html">Page 3</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="page4.html">Page 4</a>
+            <a class="nav-link" href="page4.html"><b>Page 4</b></a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="page5.html">Page 5</a>
@@ -103,82 +103,100 @@
       zoom: 5
     });
 
-    // Initialize noUiSlider for size layer
-    var sliderSize1 = document.getElementById('slider1');
-    var valuesForsliderSize1 = [0,100,150,200,250,300,400,450,550,600,650,700];
+   
+    var snowfallAverage = (function () {
+      // After Overlay is created be sure to update the layer control
+      // Add column name from ski_stats as variable
+      var skiStatsColumn = ('Season_Average');
+      // Add div slider id as variable
+      var sliderNumber = ('slider1')
+      // Update slider numbers based on ski_stats column data
+      var valuesForsliderSize = [0, 100, 150, 200, 250, 300, 400, 450, 550, 600, 650, 700];
+            // circle size & color variables
+      var circleValues = [100, 200, 300, 400, 500];
 
-    var format1 = {
-    to: function(value) {
-        return valuesForsliderSize1[Math.round(value)];
-    },
-    from: function (value) {
-        return valuesForsliderSize1.indexOf(Number(value));
-      }
-    };
+      // No more changes needed in this variable function all changes are made from above variables
+      
+      // Initialize noUiSlider for size layer
+      var sliderSize = document.getElementById(sliderNumber);
+      var lastValue = valuesForsliderSize[valuesForsliderSize.length - 1];
+      console.log(lastValue);
 
-    var slider1 = document.getElementById('slider1');
-    noUiSlider.create(slider1, {
-        start: [0, 700],
+      var format = {
+        to: function (value) {
+          return valuesForsliderSize[Math.round(value)];
+        },
+        from: function (value) {
+          return valuesForsliderSize.indexOf(Number(value));
+        }
+      };
+
+      var slider = document.getElementById(sliderNumber);
+      noUiSlider.create(slider, {
+        start: [0, lastValue],
         orientation: 'vertical',
         // A linear range from 0 to 15 (16 values)
-        range: { min: 0, max: valuesForsliderSize1.length - 1 },
+        range: { min: 0, max: valuesForsliderSize.length - 1 },
         // steps of 1
         step: 1,
         tooltips: true,
-        format: format1,
-        pips: { mode: 'steps', format: format1 },        
-              
-    });
+        format: format,
+        pips: { mode: 'steps', format: format },
+      });
 
-    // The display values can be used to control the slider
-    sliderSize1.noUiSlider.set(['0', '700']);
+      // The display values can be used to control the slider
+      sliderSize.noUiSlider.set(['0', lastValue]);
 
-    // Initialize skiStats as an empty L.geoJSON layer
-    var snowfallAverage = L.geoJSON();
+      // Initialize skiStats as an empty L.geoJSON layer
+      var newMap = L.geoJSON();
 
-    sliderSize1.noUiSlider.on('update', function (values, handle) {
-        var minAcres = parseFloat(values[0]);
-        var maxAcres = parseFloat(values[1]);
+      sliderSize.noUiSlider.on('update', function (values, handle) {
+        var minValue = parseFloat(values[0]);
+        var maxValue = parseFloat(values[1]);
 
-    // Clear the current map layer
-    snowfallAverage.clearLayers();
+        // Clear the current map layer
+        newMap.clearLayers();
 
-    //Average Snowfall
-    L.geoJSON(ski_stats, {
-        filter: function (feature) {
+        // Average Snowfall
+        L.geoJSON(ski_stats, {
+          filter: function (feature) {
             // Only show features within the selected average snowfall range
-            return feature.properties.Season_Average >= minAcres && feature.properties.Season_Average <= maxAcres;
-        },
-        pointToLayer: function (feature, latlng) {
-            // Your pointToLayer code
-            var circleSize; 
-            if (feature.properties.Season_Average == null) circleSize = 2;     
-            else if (feature.properties.Season_Average <= 100) circleSize = 4;
-            else if (feature.properties.Season_Average <= 200) circleSize = 6;
-            else if (feature.properties.Season_Average <= 300) circleSize = 8;
-            else if (feature.properties.Season_Average <= 400) circleSize = 10;
-            else if (feature.properties.Season_Average <= 500) circleSize = 14;
-            else if (feature.properties.Season_Average > 500) circleSize = 18;
+            return feature.properties[skiStatsColumn] >= minValue && feature.properties[skiStatsColumn] <= maxValue;
+          },
+          pointToLayer: function (feature, latlng) {
+            // circleSize & circleColor pulled from circleValues variable
+            var circleSize;
+            if (feature.properties[skiStatsColumn] == null) circleSize = 2;
+            else if (feature.properties[skiStatsColumn] <= circleValues[0]) circleSize = 4;
+            else if (feature.properties[skiStatsColumn] <= circleValues[1]) circleSize = 6;
+            else if (feature.properties[skiStatsColumn] <= circleValues[2]) circleSize = 8;
+            else if (feature.properties[skiStatsColumn] <= circleValues[3]) circleSize = 10;
+            else if (feature.properties[skiStatsColumn] <= circleValues[4]) circleSize = 14;
+            else if (feature.properties[skiStatsColumn] > circleValues[4]) circleSize = 18;
             else circleSize = 0;
 
             var circleColor;
-            if (feature.properties.Season_Average == null) circleColor = '#808080';      
-            else if (feature.properties.Season_Average <= 100) circleColor = '#3288bd';
-            else if (feature.properties.Season_Average <= 100) circleColor = '#3288bd';
-            else if (feature.properties.Season_Average <= 200) circleColor = '#99d594';
-            else if (feature.properties.Season_Average <= 300) circleColor = '#e6f598';
-            else if (feature.properties.Season_Average <= 400) circleColor = '#fee08b';
-            else if (feature.properties.Season_Average <= 500) circleColor = '#fc8d59';
-            else if (feature.properties.Season_Average > 500) circleColor = '#d53e4f';
+            if (feature.properties[skiStatsColumn] == null) circleColor = '#808080';
+            else if (feature.properties[skiStatsColumn] <= circleValues[0]) circleColor = '#3288bd';
+            else if (feature.properties[skiStatsColumn] <= circleValues[1]) circleColor = '#99d594';
+            else if (feature.properties[skiStatsColumn] <= circleValues[2]) circleColor = '#e6f598';
+            else if (feature.properties[skiStatsColumn] <= circleValues[3]) circleColor = '#fee08b';
+            else if (feature.properties[skiStatsColumn] <= circleValues[4]) circleColor = '#fc8d59';
+            else if (feature.properties[skiStatsColumn] > circleValues[4]) circleColor = '#d53e4f';
             else circleColor = '#737373';
 
-            var marker = L.circleMarker(latlng, {radius: circleSize, color: circleColor, weight: 1, opacity: 4, fillOpacity: 0.7});
-            marker.bindPopup("<b> Resort Name: </b>" + feature.properties.resort_name + "<br><b> Snowfall Average: </b>" + feature.properties.Season_Average + "</p>");
+            var marker = L.circleMarker(latlng, { radius: circleSize, color: circleColor, weight: 1, opacity: 4, fillOpacity: 0.7 });
+            marker.bindPopup("<b> Resort Name: </b>" + feature.properties.resort_name + "<br><b> Snowfall Average: </b>" + feature.properties[skiStatsColumn] + "</p>");
             return marker;
-        }
-    }).addTo(snowfallAverage);
+          }
+        }).addTo(newMap);
 
-    });
+      });
+
+      return newMap;
+    })();
+
+  
 
 
     // Initialize noUiSlider for summit layer
@@ -403,7 +421,7 @@
 
     });
 
-
+    // Layer control groups
     // Base maps
     var baseMaps = {
       "Stamen Toner Lite": Stamen_TonerLite,

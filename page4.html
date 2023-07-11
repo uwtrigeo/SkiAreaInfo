@@ -104,22 +104,12 @@
     });
 
    
-    var snowfallAverage = (function () {
-      // After Overlay is created be sure to update the layer control
-      // Add column name from ski_stats as variable
-      var skiStatsColumn = ('Season_Average');
-      // Add div slider id as variable
-      var sliderNumber = ('slider1')
-      // Update slider numbers based on ski_stats column data
-      var valuesForsliderSize = [0, 100, 150, 200, 250, 300, 400, 450, 550, 600, 650, 700];
-      var lastValue = valuesForsliderSize[valuesForsliderSize.length - 1];
-      // circle size & color variables
-      var circleValues = [100, 200, 300, 400, 500];
+    function createMap(skiStatsColumn, sliderNumber, valuesForsliderSize, circleValues) {
+      
 
-      // No more changes needed in this variable function all changes are made from above variables
       // Initialize noUiSlider for size layer
       var sliderSize = document.getElementById(sliderNumber);
-      
+      var lastValue = valuesForsliderSize[valuesForsliderSize.length - 1];
       console.log(lastValue);
 
       var format = {
@@ -137,7 +127,7 @@
         orientation: 'vertical',
         // A linear range from 0 to 15 (16 values)
         range: { min: 0, max: valuesForsliderSize.length - 1 },
-        // steps of 1
+        // Steps of 1
         step: 1,
         tooltips: true,
         format: format,
@@ -164,7 +154,7 @@
             return feature.properties[skiStatsColumn] >= minValue && feature.properties[skiStatsColumn] <= maxValue;
           },
           pointToLayer: function (feature, latlng) {
-            // circleSize & circleColor pulled from circleValues variable
+            // CircleSize & circleColor pulled from circleValues variable
             var circleSize;
             if (feature.properties[skiStatsColumn] == null) circleSize = 2;
             else if (feature.properties[skiStatsColumn] <= circleValues[0]) circleSize = 4;
@@ -190,11 +180,20 @@
             return marker;
           }
         }).addTo(newMap);
-
       });
 
       return newMap;
-    })();
+    };
+
+  
+
+    // Example usage:
+    var skiStatsColumn = 'Season_Average';
+    var sliderNumber = 'slider1';
+    var valuesForsliderSize = [0, 100, 150, 200, 250, 300, 400, 450, 550, 600, 650, 700];
+    var circleValues = [100, 200, 300, 400, 500];
+
+    var snowfallAverage = createMap(skiStatsColumn, sliderNumber, valuesForsliderSize, circleValues);
 
   
 
