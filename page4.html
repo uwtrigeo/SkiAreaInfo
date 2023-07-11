@@ -103,85 +103,85 @@
       zoom: 5
     });
 
-        // Function to create overlay map
-        function createMap(popUpDesc, skiStatsColumn, sliderNumber, valuesForsliderSize, circleValues) {      
+    // Function to create overlay map
+    function createMap(popUpDesc, skiStatsColumn, sliderNumber, valuesForsliderSize, circleValues) {      
 
-    // Initialize noUiSlider for size layer
-    var sliderSize = document.getElementById(sliderNumber);
-    var lastValue = valuesForsliderSize[valuesForsliderSize.length - 1];
-    console.log(lastValue);
+      // Initialize noUiSlider for size layer
+      var sliderSize = document.getElementById(sliderNumber);
+      var lastValue = valuesForsliderSize[valuesForsliderSize.length - 1];
+      console.log(lastValue);
 
-    var format = {
-      to: function (value) {
-        return valuesForsliderSize[Math.round(value)];
-      },
-      from: function (value) {
-        return valuesForsliderSize.indexOf(Number(value));
-      }
-    };
-
-    var slider = document.getElementById(sliderNumber);
-    noUiSlider.create(slider, {
-      start: [0, lastValue],
-      orientation: 'vertical',
-      // A linear range from 0 to 15 (16 values)
-      range: { min: 0, max: valuesForsliderSize.length - 1 },
-      // Steps of 1
-      step: 1,
-      tooltips: true,
-      format: format,
-      pips: { mode: 'steps', format: format },
-    });
-
-    // The display values can be used to control the slider
-    sliderSize.noUiSlider.set(['0', lastValue]);
-
-    // Initialize skiStats as an empty L.geoJSON layer
-    var newMap = L.geoJSON();
-
-    sliderSize.noUiSlider.on('update', function (values, handle) {
-      var minValue = parseFloat(values[0]);
-      var maxValue = parseFloat(values[1]);
-
-      // Clear the current map layer
-      newMap.clearLayers();
-
-      // Average Snowfall
-      L.geoJSON(ski_stats, {
-        filter: function (feature) {
-          // Only show features within the selected average snowfall range
-          return feature.properties[skiStatsColumn] >= minValue && feature.properties[skiStatsColumn] <= maxValue;
+      var format = {
+        to: function (value) {
+          return valuesForsliderSize[Math.round(value)];
         },
-        pointToLayer: function (feature, latlng) {
-          // CircleSize & circleColor pulled from circleValues variable
-          var circleSize;
-          if (feature.properties[skiStatsColumn] == null) circleSize = 2;
-          else if (feature.properties[skiStatsColumn] <= circleValues[0]) circleSize = 4;
-          else if (feature.properties[skiStatsColumn] <= circleValues[1]) circleSize = 6;
-          else if (feature.properties[skiStatsColumn] <= circleValues[2]) circleSize = 8;
-          else if (feature.properties[skiStatsColumn] <= circleValues[3]) circleSize = 10;
-          else if (feature.properties[skiStatsColumn] <= circleValues[4]) circleSize = 14;
-          else if (feature.properties[skiStatsColumn] > circleValues[4]) circleSize = 18;
-          else circleSize = 0;
-
-          var circleColor;
-          if (feature.properties[skiStatsColumn] == null) circleColor = '#808080';
-          else if (feature.properties[skiStatsColumn] <= circleValues[0]) circleColor = '#3288bd';
-          else if (feature.properties[skiStatsColumn] <= circleValues[1]) circleColor = '#99d594';
-          else if (feature.properties[skiStatsColumn] <= circleValues[2]) circleColor = '#e6f598';
-          else if (feature.properties[skiStatsColumn] <= circleValues[3]) circleColor = '#fee08b';
-          else if (feature.properties[skiStatsColumn] <= circleValues[4]) circleColor = '#fc8d59';
-          else if (feature.properties[skiStatsColumn] > circleValues[4]) circleColor = '#d53e4f';
-          else circleColor = '#737373';
-
-          var marker = L.circleMarker(latlng, { radius: circleSize, color: circleColor, weight: 1, opacity: 4, fillOpacity: 0.7 });
-          marker.bindPopup("<b> Resort Name: </b>" + feature.properties.resort_name + "<br><b> " + popUpDesc + ": </b>" + feature.properties[skiStatsColumn] + "</p>");
-          return marker;
+        from: function (value) {
+          return valuesForsliderSize.indexOf(Number(value));
         }
-      }).addTo(newMap);
-    });
+      };
 
-    return newMap;
+      var slider = document.getElementById(sliderNumber);
+      noUiSlider.create(slider, {
+        start: [0, lastValue],
+        orientation: 'vertical',
+        // A linear range from 0 to 15 (16 values)
+        range: { min: 0, max: valuesForsliderSize.length - 1 },
+        // Steps of 1
+        step: 1,
+        tooltips: true,
+        format: format,
+        pips: { mode: 'steps', format: format },
+      });
+
+      // The display values can be used to control the slider
+      sliderSize.noUiSlider.set(['0', lastValue]);
+
+      // Initialize skiStats as an empty L.geoJSON layer
+      var newMap = L.geoJSON();
+
+      sliderSize.noUiSlider.on('update', function (values, handle) {
+        var minValue = parseFloat(values[0]);
+        var maxValue = parseFloat(values[1]);
+
+        // Clear the current map layer
+        newMap.clearLayers();
+
+        // Average Snowfall
+        L.geoJSON(ski_stats, {
+          filter: function (feature) {
+            // Only show features within the selected average snowfall range
+            return feature.properties[skiStatsColumn] >= minValue && feature.properties[skiStatsColumn] <= maxValue;
+          },
+          pointToLayer: function (feature, latlng) {
+            // CircleSize & circleColor pulled from circleValues variable
+            var circleSize;
+            if (feature.properties[skiStatsColumn] == null) circleSize = 2;
+            else if (feature.properties[skiStatsColumn] <= circleValues[0]) circleSize = 4;
+            else if (feature.properties[skiStatsColumn] <= circleValues[1]) circleSize = 6;
+            else if (feature.properties[skiStatsColumn] <= circleValues[2]) circleSize = 8;
+            else if (feature.properties[skiStatsColumn] <= circleValues[3]) circleSize = 10;
+            else if (feature.properties[skiStatsColumn] <= circleValues[4]) circleSize = 14;
+            else if (feature.properties[skiStatsColumn] > circleValues[4]) circleSize = 18;
+            else circleSize = 0;
+
+            var circleColor;
+            if (feature.properties[skiStatsColumn] == null) circleColor = '#808080';
+            else if (feature.properties[skiStatsColumn] <= circleValues[0]) circleColor = '#3288bd';
+            else if (feature.properties[skiStatsColumn] <= circleValues[1]) circleColor = '#99d594';
+            else if (feature.properties[skiStatsColumn] <= circleValues[2]) circleColor = '#e6f598';
+            else if (feature.properties[skiStatsColumn] <= circleValues[3]) circleColor = '#fee08b';
+            else if (feature.properties[skiStatsColumn] <= circleValues[4]) circleColor = '#fc8d59';
+            else if (feature.properties[skiStatsColumn] > circleValues[4]) circleColor = '#d53e4f';
+            else circleColor = '#737373';
+
+            var marker = L.circleMarker(latlng, { radius: circleSize, color: circleColor, weight: 1, opacity: 4, fillOpacity: 0.7 });
+            marker.bindPopup("<b> Resort Name: </b>" + feature.properties.resort_name + "<br><b> " + popUpDesc + ": </b>" + feature.properties[skiStatsColumn] + "</p>");
+            return marker;
+          }
+        }).addTo(newMap);
+      });
+
+      return newMap;
     };
 
 
@@ -194,9 +194,9 @@
     var circleValues = [100, 200, 300, 400, 500];
 
     var snowfallAverage = createMap(popUpDesc, skiStatsColumn, sliderNumber, valuesForsliderSize, circleValues);
-    var skiSummit = createMap('Summit Elevation (feet)','summit', 'slider2', [0, 100, 1000, 2000, 3000, 4000, 5000, 6000, 8000, 10000, 12000, 14000], [1000, 2000, 5000, 8000, 10000]);
-    var skiBase = createMap('Base Elevation (feet)','base', 'slider3', [0, 100, 1000, 2000, 3000, 4000, 5000, 6000, 8000, 9000, 10000, 11000], [1000, 2000, 5000, 8000, 10000]);
-    var skiVertical = createMap('Vertical Drop (feet)','vertical', 'slider4', [0, 100, 500, 1000, 1500, 2000, 2500, 3000, 4000, 5000], [500, 1000, 2000, 3000, 4000]);
+    var skiLifts = createMap('Total Lifts','lifts','slider2', [0, 2, 4, 6, 8, 10, 15, 20, 25, 30, 40, 50], [2, 6, 10, 15, 20]);
+    var skiRuns = createMap('Total Runs','runs','slider3', [0, 5, 10, 20, 30, 40, 60, 80, 100, 150, 300, 350], [10, 20, 50, 100, 150]);
+    
 
 
     // Layer control groups
@@ -212,29 +212,18 @@
     // Overlays
     var overlayMaps = {
       "Average Snowfall": snowfallAverage,
-      "Summit Elevation": skiSummit,
-      "Base Elevation": skiBase,
-      "Vertical Drop": skiVertical
+      "Lifts": skiLifts,
+      "Runs": skiRuns,
+      
     };
-
-    // // Grouped Base maps
-    // var groupedBaseMaps = {
-    //   "Map": {
-    //     "Stamen Toner Lite": Stamen_TonerLite,
-    //     "OpenStreetMap HOT": OpenStreetMap_HOT,
-    //     "OpenStreetMap": OSM,
-    //     "OSM Topo": OpenTopoMap,
-    //     "Esri World Imagery": Esri_WorldImagery
-    //   }
-    // };
 
     // Grouped Overlays
     var groupedOverlays = {
       "Ski Resort": {
         "Average Snowfall": snowfallAverage,
-        "Summit Elevation": skiSummit,
-        "Base Elevation": skiBase,
-        "Vertical Drop": skiVertical
+        "Lifts": skiLifts,
+        "Runs": skiRuns,
+        
       }
       
     };
@@ -244,47 +233,46 @@
     // Show a checkbox next to non-exclusive group labels for toggling all
     groupCheckboxes: true,
     collapsed: false
-  };
+    };
 
-  // Keep track of active overlays and show slider with relevant layer
-  var activeOverlays = new Set();
+    // Keep track of active overlays and show slider with relevant layer
+    var activeOverlays = new Set();
 
-  // Mapping between overlay names and slider IDs
-  var overlaySliderMap = {
-    'Average Snowfall': 'slider1',
-    'Summit Elevation': 'slider2',
-    'Base Elevation': 'slider3',
-    'Vertical Drop': 'slider4'
-  
-  };
+    // Mapping between overlay names and slider IDs
+    var overlaySliderMap = {
+      'Average Snowfall': 'slider1',
+      'Lifts': 'slider2',
+      'Runs': 'slider3',
+        
+    };
 
-  // Function to handle the display style of the sliders
-  function handleSliderDisplay(overlayName, displayStyle) {
-    var sliderId = overlaySliderMap[overlayName];
-    if (sliderId) {
-      document.getElementById(sliderId).style.display = displayStyle;
-    }
-  }
-
-  // Function to hide all sliders except the one associated with the given overlay
-  function hideOtherSliders(overlayName) {
-    for (var overlay in overlaySliderMap) {
-      if (overlay !== overlayName) {
-        handleSliderDisplay(overlay, 'none');
+    // Function to handle the display style of the sliders
+    function handleSliderDisplay(overlayName, displayStyle) {
+      var sliderId = overlaySliderMap[overlayName];
+      if (sliderId) {
+        document.getElementById(sliderId).style.display = displayStyle;
       }
     }
-  }
 
-  map.on('overlayadd', function(eventLayer) {
-    activeOverlays.add(eventLayer.name);
-    handleSliderDisplay(eventLayer.name, 'block');
-    hideOtherSliders(eventLayer.name);
-  });
+    // Function to hide all sliders except the one associated with the given overlay
+    function hideOtherSliders(overlayName) {
+      for (var overlay in overlaySliderMap) {
+        if (overlay !== overlayName) {
+          handleSliderDisplay(overlay, 'none');
+        }
+      }
+    }
 
-  map.on('overlayremove', function(eventLayer) {
-    activeOverlays.delete(eventLayer.name);
-    handleSliderDisplay(eventLayer.name, 'none');
-  });
+    map.on('overlayadd', function(eventLayer) {
+      activeOverlays.add(eventLayer.name);
+      handleSliderDisplay(eventLayer.name, 'block');
+      hideOtherSliders(eventLayer.name);
+    });
+
+    map.on('overlayremove', function(eventLayer) {
+      activeOverlays.delete(eventLayer.name);
+      handleSliderDisplay(eventLayer.name, 'none');
+    });
 
 
     // Layer control
@@ -303,7 +291,7 @@
     // When the control is added to the map, insert a div with your title
     title.onAdd = function (map) {
         var div = L.DomUtil.create('div', 'info map-title');
-        div.innerHTML = '<h4>Average Snowfall</h4><p>Click on a resort to see name and details.</p>';
+        div.innerHTML = '<h4>Terrain Aspect and Steepness</h4><p>Click on a resort to see name and details.</p>';
         return div;
     };
 
