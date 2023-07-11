@@ -23,7 +23,7 @@
 </head>
 <body>
   <!-- link that loads the ski resort data from an external file -->
-  <script type="text/javascript" src="data/ski_resort_stats.js"></script>
+  <script type="text/javascript" src="data/ski_stats.js"></script>
   
   <!-- Navigation bar to access other maps -->
   <header>
@@ -148,7 +148,7 @@
         // Average Snowfall
         L.geoJSON(ski_stats, {
           filter: function (feature) {
-            // Only show features within the selected average snowfall range
+            // Only show features within the selected range
             return feature.properties[skiStatsColumn] >= minValue && feature.properties[skiStatsColumn] <= maxValue;
           },
           pointToLayer: function (feature, latlng) {
