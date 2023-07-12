@@ -63,6 +63,9 @@
   <div id="slider2"></div>
   <div id="slider3"></div>
   <div id="slider4"></div>
+  <div id="slider5"></div>
+  <div id="slider6"></div>
+  <div id="slider7"></div>
   <div id="map"></div>
   
 
@@ -75,11 +78,6 @@
         minZoom: 0,
         maxZoom: 20,
         ext: 'png'
-    });
-    // OSM HOT
-    var OpenStreetMap_HOT = L.tileLayer('https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
-        maxZoom: 19,
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Tiles style by <a href="https://www.hotosm.org/" target="_blank">Humanitarian OpenStreetMap Team</a> hosted by <a href="https://openstreetmap.fr/" target="_blank">OpenStreetMap France</a>'
     });
     // OpenStreetMap layer
     var OSM = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -193,12 +191,16 @@
     var popUpDesc = 'North Aspect %';
     var skiStatsColumn = 'NorthAspectPerc';
     var sliderNumber = 'slider1';
-    var valuesForsliderSize = [0, 10, 20, 30, 40, 50, 55, 60, 70, 80, 90, 100];
+    var valuesForsliderSize = [0, 5, 10, 20, 30, 40, 50, 55, 60, 70, 80, 90];
     var circleValues = [5, 25, 50, 75, 80];
 
     var skiNorth = createMap(popUpDesc, skiStatsColumn, sliderNumber, valuesForsliderSize, circleValues);
-    var skiLifts = createMap('Total Lifts','lifts','slider2', [0, 2, 4, 6, 8, 10, 15, 20, 25, 30, 40, 50], [2, 6, 10, 15, 20]);
-    var skiRuns = createMap('Total Runs','runs','slider3', [0, 5, 10, 20, 30, 40, 60, 80, 100, 150, 300, 350], [10, 20, 50, 100, 150]);
+    var skiEast = createMap('East Aspect %','EastAspectPerc','slider2', [0, 10, 20, 30, 40, 50, 55, 60, 70, 80, 90, 100], [5, 25, 50, 75, 80]);
+    var skiWest = createMap('West Aspect %','WestAspectPerc','slider3', [0, 10, 20, 30, 40, 50, 55, 60, 70, 80, 90, 100], [5, 25, 50, 75, 80]);
+    var skiSouth = createMap('South Aspect %','SouthAspectPerc','slider4', [0, 5, 10, 20, 30, 40, 50, 55, 60, 70, 80, 90], [5, 25, 50, 75, 80]);
+    var skiGreen = createMap('Green Runs %','green_percent','slider5', [0, 5, 10, 15, 20, 30, 40, 50, 55, 60, 70, 80], [5, 25, 50, 75, 80]);
+    var skiBlue = createMap('Blue Runs %','blue_percent','slider6', [0, 10, 20, 30, 40, 50, 55, 60, 70, 80, 90, 100], [5, 25, 50, 75, 80]);
+    var skiBlack = createMap('Black Runs %','black_percent','slider7', [0, 5, 10, 15, 20, 30, 40, 50, 55, 60, 70, 80], [5, 25, 50, 75, 80]);
     
 
 
@@ -206,7 +208,6 @@
     // Base maps
     var baseMaps = {
       "Stamen Toner Lite": Stamen_TonerLite,
-      "OpenStreetMap HOT": OpenStreetMap_HOT,
       "OpenStreetMap": OSM,
       "OSM Topo": OpenTopoMap,
       "Esri World Imagery": Esri_WorldImagery
@@ -214,25 +215,31 @@
 
     // Overlays
     var overlayMaps = {
-      "North Aspect": skiNorth,
-      "Lifts": skiLifts,
-      "Runs": skiRuns,
+      "North Aspect %": skiNorth,
+      "East Aspect %": skiEast,
+      "West Aspect %": skiWest,
+      "South Aspect %": skiSouth,
+      "Green Runs %": skiGreen,
+      "Blue Runs %": skiBlue,
+      "Black Runs %": skiBlack
       
     };
 
     // Grouped Overlays
     var groupedOverlays = {
-      "Ski Resort": {
-        "North Aspect": skiNorth,
-        "Lifts": skiLifts,
-        "Runs": skiRuns,
-        
-      }
-      
+      "Slope Aspect": {
+        "North Aspect %": skiNorth,
+        "East Aspect %": skiEast,
+        "West Aspect %": skiWest,
+        "South Aspect %": skiSouth,
+        "Green Runs %": skiGreen,
+        "Blue Runs %": skiBlue,
+        "Black Runs %": skiBlack
+      },
     };
     var options = {
     // Make the "Landmarks" group exclusive (use radio inputs)
-    exclusiveGroups: ["Ski Resort"],
+    exclusiveGroups: ["Slope Aspect", "Slope Difficulty"],
     // Show a checkbox next to non-exclusive group labels for toggling all
     groupCheckboxes: true,
     collapsed: false
@@ -243,9 +250,13 @@
 
     // Mapping between overlay names and slider IDs
     var overlaySliderMap = {
-      'North Aspect': 'slider1',
-      'Lifts': 'slider2',
-      'Runs': 'slider3',
+      'North Aspect %': 'slider1',
+      'East Aspect %': 'slider2',
+      'West Aspect %': 'slider3',
+      'South Aspect %': 'slider4',
+      'Green Runs %': 'slider5',
+      'Blue Runs %': 'slider6',
+      'Black Runs %': 'slider7'
         
     };
 
@@ -283,7 +294,7 @@
 
     // Add base layer to the map
     baseMaps["Stamen Toner Lite"].addTo(map);
-    overlayMaps["North Aspect"].addTo(map);
+    overlayMaps["North Aspect %"].addTo(map);
     
     // add scale bar
     L.control.scale().addTo(map);
@@ -294,7 +305,7 @@
     // When the control is added to the map, insert a div with your title
     title.onAdd = function (map) {
         var div = L.DomUtil.create('div', 'info map-title');
-        div.innerHTML = '<h4>Terrain Aspect and Steepness</h4><p>Click on a resort to see name and details.</p>';
+        div.innerHTML = '<h4>Terrain Aspect and Difficulty</h4><p>Click on a resort to see name and details.</p>';
         return div;
     };
 

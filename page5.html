@@ -23,7 +23,7 @@
 </head>
 <body>
   <!-- link that loads the ski resort data from an external file -->
-  <script type="text/javascript" src="data/ski_resort_stats.js"></script>
+  <script type="text/javascript" src="data/ski_stats.js"></script>
   
   <!-- Navigation bar to access other maps -->
   <header>
@@ -187,13 +187,13 @@
   
 
     // Map Overlays:
-    var popUpDesc = 'Average Snowfall (inches)';
-    var skiStatsColumn = 'Season_Average';
+    var popUpDesc = 'Ski Resort Score';
+    var skiStatsColumn = 'S_Total';
     var sliderNumber = 'slider1';
-    var valuesForsliderSize = [0, 100, 150, 200, 250, 300, 400, 450, 550, 600, 650, 700];
-    var circleValues = [100, 200, 300, 400, 500];
+    var valuesForsliderSize = [0, 50, 70, 90, 110, 130, 150, 170, 190, 210, 235, 245];
+    var circleValues = [40, 80, 120, 160, 200];
 
-    var snowfallAverage = createMap(popUpDesc, sliderNumber, valuesForsliderSize, circleValues);
+    var totalScore = createMap(popUpDesc, sliderNumber, valuesForsliderSize, circleValues);
     
 
 
@@ -209,7 +209,7 @@
 
     // Overlays
     var overlayMaps = {
-      "Average Snowfall": snowfallAverage,
+      "Total Score": totalScore,
       
     };
 
@@ -227,7 +227,7 @@
     // Grouped Overlays
     var groupedOverlays = {
       "Ski Resort": {
-        "Average Snowfall": snowfallAverage,
+        "Total Score": totalScore,
         
       }
       
@@ -245,7 +245,7 @@
 
   // Mapping between overlay names and slider IDs
   var overlaySliderMap = {
-    'Average Snowfall': 'slider1',
+    'Total Score': 'slider1',
     'Summit Elevation': 'slider2',
     'Base Elevation': 'slider3',
     'Vertical Drop': 'slider4'
@@ -286,7 +286,7 @@
 
     // Add base layer to the map
     baseMaps["Stamen Toner Lite"].addTo(map);
-    overlayMaps["Average Snowfall"].addTo(map);
+    overlayMaps["Total Score"].addTo(map);
     
     // add scale bar
     L.control.scale().addTo(map);
@@ -297,7 +297,7 @@
     // When the control is added to the map, insert a div with your title
     title.onAdd = function (map) {
         var div = L.DomUtil.create('div', 'info map-title');
-        div.innerHTML = '<h4>Average Snowfall</h4><p>Click on a resort to see name and details.</p>';
+        div.innerHTML = '<h4>Ski Resort Scores</h4><p>Click on a resort to see name and details.</p>';
         return div;
     };
 

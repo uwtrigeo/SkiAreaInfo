@@ -28,7 +28,6 @@ html, body {
     height: 300px;
     z-index: 1000; /* Adjust this as needed */
 }
-
 /* noUISlider numbers changed color to black */
 #slider .noUi-value {
     color: black;
@@ -42,7 +41,6 @@ width: 15px;
 height: 300px;
 z-index: 1000; /* Adjust this as needed */
 }
-
 /* noUISlider numbers changed color to black */
 #slider1 .noUi-value {
   color: black;
@@ -55,8 +53,7 @@ z-index: 1000; /* Adjust this as needed */
   width: 15px;
   height: 300px;
   z-index: 1000; /* Adjust this as needed */
-  }
-  
+  }  
 /* noUISlider numbers changed color to black */
 #slider2 .noUi-value {
   color: black;
@@ -69,8 +66,7 @@ z-index: 1000; /* Adjust this as needed */
   width: 15px;
   height: 300px;
   z-index: 1000; /* Adjust this as needed */
-  }
-  
+  }  
 /* noUISlider numbers changed color to black */
 #slider3 .noUi-value {
   color: black;
@@ -89,7 +85,46 @@ z-index: 1000; /* Adjust this as needed */
 #slider4 .noUi-value {
   color: black;
 }
+#slider5 {
+  position: fixed;
+  right: 4.5%;
+  bottom: 6%;
+  width: 15px;
+  height: 300px;
+  z-index: 1000; /* Adjust this as needed */
+  }
+  
+/* noUISlider numbers changed color to black */
+#slider5 .noUi-value {
+  color: black;
+}
+#slider6 {
+  position: fixed;
+  right: 4.5%;
+  bottom: 6%;
+  width: 15px;
+  height: 300px;
+  z-index: 1000; /* Adjust this as needed */
+  }
+  
+/* noUISlider numbers changed color to black */
+#slider6 .noUi-value {
+  color: black;
+}
 
+#slider7 {
+  position: fixed;
+  right: 4.5%;
+  bottom: 6%;
+  width: 15px;
+  height: 300px;
+  z-index: 1000; /* Adjust this as needed */
+  }
+  
+/* noUISlider numbers changed color to black */
+#slider7 .noUi-value {
+  color: black;
+}
 
 /* Toggle layers Mapbox*/
 #menu {
