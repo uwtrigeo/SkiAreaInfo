@@ -64,6 +64,10 @@
   <div id="slider2"></div>
   <div id="slider3"></div>
   <div id="slider4"></div>
+  <div id="slider5"></div>
+  <div id="slider6"></div>
+  <div id="slider7"></div>
+  <div id="slider8"></div>
   <div id="map"></div>
   
 
@@ -104,7 +108,7 @@
     });
 
     // Function to create overlay map
-    function createMap(popUpDesc, sliderNumber, valuesForsliderSize, circleValues) {      
+    function createMap(popUpDesc, skiStatsColumn, sliderNumber, valuesForsliderSize, circleValues) {      
 
       // Initialize noUiSlider for size layer
       var sliderSize = document.getElementById(sliderNumber);
@@ -190,10 +194,17 @@
     var popUpDesc = 'Ski Resort Score';
     var skiStatsColumn = 'S_Total';
     var sliderNumber = 'slider1';
-    var valuesForsliderSize = [0, 50, 70, 90, 110, 130, 150, 170, 190, 210, 235, 245];
-    var circleValues = [40, 80, 120, 160, 200];
+    var valuesForsliderSize = [0, 2, 4, 6, 8, 10, 12, 14, 15, 16, 18, 20];
+    var circleValues = [1, 5, 10, 14, 18];
 
-    var totalScore = createMap(popUpDesc, sliderNumber, valuesForsliderSize, circleValues);
+    var totalScore = createMap(popUpDesc, skiStatsColumn, sliderNumber, [0, 50, 70, 90, 110, 130, 150, 170, 190, 210, 235, 245], [40, 80, 120, 160, 200]);
+    var summitScore = createMap('Summit Score', 'S_Summit', 'slider2', valuesForsliderSize, circleValues);
+    var baseScore = createMap('Base Score', 'S_Base', 'slider3', valuesForsliderSize, circleValues);
+    var verticalScore = createMap('Vertical Score', 'S_Vertical', 'slider4', valuesForsliderSize, circleValues);
+    var liftScore = createMap('Lift Score', 'S_Lifts', 'slider5', valuesForsliderSize, circleValues);
+    var runsScore = createMap('Runs Score', 'S_Runs', 'slider6', valuesForsliderSize, circleValues);
+    var acresScore = createMap('Acres Score', 'S_Acres', 'slider7', valuesForsliderSize, circleValues);
+    var snowScore = createMap('Snow Score', 'S_SnowAv', 'slider8', valuesForsliderSize, circleValues);
     
 
 
@@ -201,7 +212,6 @@
     // Base maps
     var baseMaps = {
       "Stamen Toner Lite": Stamen_TonerLite,
-      "OpenStreetMap HOT": OpenStreetMap_HOT,
       "OpenStreetMap": OSM,
       "OSM Topo": OpenTopoMap,
       "Esri World Imagery": Esri_WorldImagery
@@ -210,25 +220,26 @@
     // Overlays
     var overlayMaps = {
       "Total Score": totalScore,
-      
+      "Summit Elevation Score": summitScore,
+      "Base Elevation Score": baseScore,
+      "Vertical Score": verticalScore,
+      "Lifts Score": liftScore,
+      "Runs Score": runsScore,
+      "Acres Score": acresScore,
+      "Snow Score": snowScore,
     };
-
-    // // Grouped Base maps
-    // var groupedBaseMaps = {
-    //   "Map": {
-    //     "Stamen Toner Lite": Stamen_TonerLite,
-    //     "OpenStreetMap HOT": OpenStreetMap_HOT,
-    //     "OpenStreetMap": OSM,
-    //     "OSM Topo": OpenTopoMap,
-    //     "Esri World Imagery": Esri_WorldImagery
-    //   }
-    // };
 
     // Grouped Overlays
     var groupedOverlays = {
       "Ski Resort": {
         "Total Score": totalScore,
-        
+        "Summit Elevation Score": summitScore,
+        "Base Elevation Score": baseScore,
+        "Vertical Score": verticalScore,
+        "Lifts Score": liftScore, 
+        "Runs Score": runsScore,
+        "Acres Score": acresScore,
+        "Snow Score": snowScore,
       }
       
     };
@@ -246,9 +257,13 @@
   // Mapping between overlay names and slider IDs
   var overlaySliderMap = {
     'Total Score': 'slider1',
-    'Summit Elevation': 'slider2',
-    'Base Elevation': 'slider3',
-    'Vertical Drop': 'slider4'
+    'Summit Elevation Score': 'slider2',
+    'Base Elevation Score': 'slider3',
+    'Vertical Score': 'slider4',
+    'Lifts Score': 'slider5',
+    'Runs Score': 'slider6',
+    'Acres Score': 'slider7',
+    'Snow Score': 'slider8',
   
   };
 
