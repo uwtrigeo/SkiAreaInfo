@@ -50,10 +50,10 @@
             <a class="nav-link" href="page4.html">Page 4</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="page5.html"><b>Page 5</b></a>
+            <a class="nav-link" href="page5.html">Page 5</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="page6.html">Page 6</a>
+            <a class="nav-link" href="page6.html"><b>Page 6</b></a>
           </li>
         </ul>
       </div>
@@ -153,29 +153,29 @@
         // Average Snowfall
         L.geoJSON(ski_stats, {
           filter: function (feature) {
-            // Only show features within the selected average snowfall range
+            // Only show features within the selected range
             return feature.properties[skiStatsColumn] >= minValue && feature.properties[skiStatsColumn] <= maxValue;
           },
           pointToLayer: function (feature, latlng) {
             // CircleSize & circleColor pulled from circleValues variable
             var circleSize;
             if (feature.properties[skiStatsColumn] == null) circleSize = 2;
-            else if (feature.properties[skiStatsColumn] <= circleValues[0]) circleSize = 4;
-            else if (feature.properties[skiStatsColumn] <= circleValues[1]) circleSize = 6;
-            else if (feature.properties[skiStatsColumn] <= circleValues[2]) circleSize = 8;
-            else if (feature.properties[skiStatsColumn] <= circleValues[3]) circleSize = 10;
-            else if (feature.properties[skiStatsColumn] <= circleValues[4]) circleSize = 14;
-            else if (feature.properties[skiStatsColumn] > circleValues[4]) circleSize = 18;
+            else if (feature.properties[skiStatsColumn] <= circleValues[0]) circleSize = 18;
+            else if (feature.properties[skiStatsColumn] <= circleValues[1]) circleSize = 14;
+            else if (feature.properties[skiStatsColumn] <= circleValues[2]) circleSize = 10;
+            else if (feature.properties[skiStatsColumn] <= circleValues[3]) circleSize = 8;
+            else if (feature.properties[skiStatsColumn] <= circleValues[4]) circleSize = 6;
+            else if (feature.properties[skiStatsColumn] > circleValues[4]) circleSize = 4;
             else circleSize = 0;
 
             var circleColor;
             if (feature.properties[skiStatsColumn] == null) circleColor = '#808080';
-            else if (feature.properties[skiStatsColumn] <= circleValues[0]) circleColor = '#3288bd';
-            else if (feature.properties[skiStatsColumn] <= circleValues[1]) circleColor = '#99d594';
-            else if (feature.properties[skiStatsColumn] <= circleValues[2]) circleColor = '#e6f598';
-            else if (feature.properties[skiStatsColumn] <= circleValues[3]) circleColor = '#fee08b';
-            else if (feature.properties[skiStatsColumn] <= circleValues[4]) circleColor = '#fc8d59';
-            else if (feature.properties[skiStatsColumn] > circleValues[4]) circleColor = '#d53e4f';
+            else if (feature.properties[skiStatsColumn] <= circleValues[0]) circleColor = '#d53e4f';
+            else if (feature.properties[skiStatsColumn] <= circleValues[1]) circleColor = '#fc8d59';
+            else if (feature.properties[skiStatsColumn] <= circleValues[2]) circleColor = '#fee08b';
+            else if (feature.properties[skiStatsColumn] <= circleValues[3]) circleColor = '#e6f598';
+            else if (feature.properties[skiStatsColumn] <= circleValues[4]) circleColor = '#99d594';
+            else if (feature.properties[skiStatsColumn] > circleValues[4]) circleColor = '#3288bd';
             else circleColor = '#737373';
 
             var marker = L.circleMarker(latlng, { radius: circleSize, color: circleColor, weight: 1, opacity: 4, fillOpacity: 0.7 });
@@ -191,20 +191,20 @@
   
 
     // Map Overlays:
-    var popUpDesc = 'Ski Resort Score';
-    var skiStatsColumn = 'S_Total';
+    var popUpDesc = 'Ski Resort Ranking';
+    var skiStatsColumn = 'R-TotalScore';
     var sliderNumber = 'slider1';
-    var valuesForsliderSize = [0, 2, 4, 6, 8, 10, 12, 14, 15, 16, 18, 20];
-    var circleValues = [1, 5, 10, 14, 18];
+    var valuesForsliderSize = [0, 30, 60, 90, 120, 150, 180, 210, 250, 300, 330, 365];
+    var circleValues = [30, 90, 150, 210, 270];
 
-    var totalScore = createMap(popUpDesc, skiStatsColumn, sliderNumber, [0, 50, 70, 90, 110, 130, 150, 170, 190, 210, 235, 245], [40, 80, 120, 160, 200]);
-    var summitScore = createMap('Summit Score', 'S_Summit', 'slider2', valuesForsliderSize, circleValues);
-    var baseScore = createMap('Base Score', 'S_Base', 'slider3', valuesForsliderSize, circleValues);
-    var verticalScore = createMap('Vertical Score', 'S_Vertical', 'slider4', valuesForsliderSize, circleValues);
-    var liftScore = createMap('Lift Score', 'S_Lifts', 'slider5', valuesForsliderSize, circleValues);
-    var runsScore = createMap('Runs Score', 'S_Runs', 'slider6', valuesForsliderSize, circleValues);
-    var acresScore = createMap('Acres Score', 'S_Acres', 'slider7', valuesForsliderSize, circleValues);
-    var snowScore = createMap('Snow Score', 'S_SnowAv', 'slider8', valuesForsliderSize, circleValues);
+    var totalScoreRank = createMap(popUpDesc, skiStatsColumn, sliderNumber, valuesForsliderSize, circleValues);
+    var summitScoreRank = createMap('Summit Elevation Score', 'R_summit', 'slider2', valuesForsliderSize, circleValues);
+    var baseScoreRank = createMap('Base Elevation Score', 'R_base', 'slider3', valuesForsliderSize, circleValues);
+    var verticalScoreRank = createMap('Vertical Score', 'R_vertical', 'slider4', valuesForsliderSize, circleValues);
+    var liftScoreRank = createMap('Lifts Score', 'R_lifts', 'slider5', valuesForsliderSize, circleValues);
+    var runsScoreRank = createMap('Runs Score', 'R_runs', 'slider6', valuesForsliderSize, circleValues);
+    var acresScoreRank = createMap('Acres Score', 'R_acres', 'slider7', valuesForsliderSize, circleValues);
+    var snowScoreRank = createMap('Snow Score', 'R_Season_Average', 'slider8', valuesForsliderSize, circleValues);
     
 
 
@@ -219,27 +219,27 @@
 
     // Overlays
     var overlayMaps = {
-      "Total Score": totalScore,
-      "Summit Elevation Score": summitScore,
-      "Base Elevation Score": baseScore,
-      "Vertical Score": verticalScore,
-      "Lifts Score": liftScore,
-      "Runs Score": runsScore,
-      "Acres Score": acresScore,
-      "Snow Score": snowScore,
+      "Total Rank": totalScoreRank,
+      "Summit Elevation Rank": summitScoreRank,
+      "Base Elevation Rank": baseScoreRank,
+      "Vertical Rank": verticalScoreRank,
+      "Lifts Rank": liftScoreRank,
+      "Runs Rank": runsScoreRank,
+      "Acres Rank": acresScoreRank,
+      "Snow Rank": snowScoreRank,
     };
 
     // Grouped Overlays
     var groupedOverlays = {
       "Ski Resort": {
-        "Total Score": totalScore,
-        "Summit Elevation Score": summitScore,
-        "Base Elevation Score": baseScore,
-        "Vertical Score": verticalScore,
-        "Lifts Score": liftScore, 
-        "Runs Score": runsScore,
-        "Acres Score": acresScore,
-        "Snow Score": snowScore,
+        "Total Rank": totalScoreRank,
+        "Summit Elevation Rank": summitScoreRank,
+        "Base Elevation Rank": baseScoreRank,
+        "Vertical Rank": verticalScoreRank,
+        "Lifts Rank": liftScoreRank,
+        "Runs Rank": runsScoreRank,
+        "Acres Rank": acresScoreRank,
+        "Snow Rank": snowScoreRank,
       }
       
     };
@@ -256,15 +256,14 @@
 
   // Mapping between overlay names and slider IDs
   var overlaySliderMap = {
-    'Total Score': 'slider1',
-    'Summit Elevation Score': 'slider2',
-    'Base Elevation Score': 'slider3',
-    'Vertical Score': 'slider4',
-    'Lifts Score': 'slider5',
-    'Runs Score': 'slider6',
-    'Acres Score': 'slider7',
-    'Snow Score': 'slider8',
-  
+    "Total Rank": "slider1",
+    "Summit Elevation Rank": "slider2",
+    "Base Elevation Rank": "slider3",
+    "Vertical Rank": "slider4",
+    "Lifts Rank": "slider5",
+    "Runs Rank": "slider6",
+    "Acres Rank": "slider7",
+    "Snow Rank": "slider8",  
   };
 
   // Function to handle the display style of the sliders
@@ -301,7 +300,7 @@
 
     // Add base layer to the map
     baseMaps["Stamen Toner Lite"].addTo(map);
-    overlayMaps["Total Score"].addTo(map);
+    overlayMaps["Total Rank"].addTo(map);
     
     // add scale bar
     L.control.scale().addTo(map);
@@ -312,7 +311,7 @@
     // When the control is added to the map, insert a div with your title
     title.onAdd = function (map) {
         var div = L.DomUtil.create('div', 'info map-title');
-        div.innerHTML = '<h4>Ski Visitation By Region</h4><p>Click on a resort to see name and details.</p>';
+        div.innerHTML = '<h4>Ski Resort Rankings</h4><p>Click on a resort to see name and details.</p>';
         return div;
     };
 
