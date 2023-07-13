@@ -44,7 +44,7 @@
             <a class="nav-link" href="page2.html">Page 2</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="page3.html"><b>Page 3</b></a>
+            <a class="nav-link" href="page3.html"><b>Snowfall, Lifts, Runs</b></a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="page4.html">Page 4</a>
@@ -75,11 +75,6 @@
         minZoom: 0,
         maxZoom: 20,
         ext: 'png'
-    });
-    // OSM HOT
-    var OpenStreetMap_HOT = L.tileLayer('https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
-        maxZoom: 19,
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Tiles style by <a href="https://www.hotosm.org/" target="_blank">Humanitarian OpenStreetMap Team</a> hosted by <a href="https://openstreetmap.fr/" target="_blank">OpenStreetMap France</a>'
     });
     // OpenStreetMap layer
     var OSM = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -202,7 +197,6 @@
     // Base maps
     var baseMaps = {
       "Stamen Toner Lite": Stamen_TonerLite,
-      "OpenStreetMap HOT": OpenStreetMap_HOT,
       "OpenStreetMap": OSM,
       "OSM Topo": OpenTopoMap,
       "Esri World Imagery": Esri_WorldImagery
